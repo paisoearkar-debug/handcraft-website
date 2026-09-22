@@ -823,3 +823,121 @@ function escapeHtml(
     }
   );
 }
+
+/* =========================================================
+   LOAD WEBSITE SETTINGS
+========================================================= */
+
+async function loadSiteSettings() {
+
+  const { data, error } = await sb
+    .from("site_settings")
+    .select("*")
+    .eq("id", 1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Handcraft settings error:", error);
+    return;
+  }
+
+  if (!data) {
+    return;
+  }
+
+  document
+    .querySelectorAll("[data-setting]")
+    .forEach(element => {
+
+      const key = element.dataset.setting;
+      const value = data[key];
+
+      if (value === null || value === undefined) {
+        return;
+      }
+
+      if (
+        element.tagName === "INPUT" ||
+        element.tagName === "TEXTAREA"
+      ) {
+        element.value = value;
+      } else {
+        element.textContent = value;
+      }
+
+      if (
+        key === "email" &&
+        element.tagName === "A"
+      ) {
+        element.href =
+          value
+            ? "mailto:" + value
+            : "mailto:";
+      }
+
+      if (
+        key === "phone" &&
+        element.tagName === "A"
+      ) {
+        element.href =
+          value
+            ? "tel:" + value.replace(/\s+/g, "")
+            : "tel:";
+      }
+
+      if (
+        key === "map_embed_url" &&
+        element.tagName === "IFRAME"
+      ) {
+        element.src =
+          value ||
+          "https://www.google.com/maps?q=Yangon%20Myanmar&output=embed";
+      }
+
+    });
+
+
+  /* Email */
+
+  document
+    .querySelectorAll('[data-setting="email"]')
+    .forEach(element => {
+
+      element.textContent =
+        data.email || "Contact us";
+
+      element.href =
+        data.email
+          ? "mailto:" + data.email
+          : "mailto:";
+
+    });
+
+
+  /* Phone */
+
+  document
+    .querySelectorAll('[data-setting="phone"]')
+    .forEach(element => {
+
+      element.textContent =
+        data.phone || "Contact us";
+
+      element.href =
+        data.phone
+          ? "tel:" + data.phone.replace(/\s+/g, "")
+          : "tel:";
+
+    });
+
+}
+
+
+/* =========================================================
+   START SITE SETTINGS
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  loadSiteSettings
+);
