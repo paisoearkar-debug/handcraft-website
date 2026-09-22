@@ -1,3 +1,8 @@
+/* =========================================================
+   HANDCRAFT MYANMAR
+   Portfolio / Supabase Project Gallery
+========================================================= */
+
 const SUPABASE_URL =
   "https://jvaqtuiyswjybasfumjw.supabase.co";
 
@@ -9,222 +14,94 @@ const sb = window.supabase.createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
 
-const grid = document.getElementById("project-grid");
-const filters = document.getElementById("filters");
 
-let allProjects = [];
-let currentProject = null;
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
+const grid =
+  document.getElementById("project-grid");
 
-/* =========================
-   HELPERS
-========================= */
+const filters =
+  document.getElementById("filters");
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+const year =
+  document.getElementById("year");
 
 
-function escapeAttribute(value) {
-  return escapeHtml(value);
-}
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+const CATEGORIES = [
+  "All",
+  "Construction",
+  "Condominium Interior Design & Decoration",
+  "Renovation",
+  "Furniture"
+];
 
 
-/* =========================
-   LOAD WEBSITE SETTINGS
-========================= */
+/*
+   Old concept projects currently in the database
+   are hidden from the public portfolio.
 
-async function loadSettings() {
+   We are NOT deleting them yet.
+   Later we can clean them properly from Admin.
+*/
 
-  const { data, error } = await sb
-    .from("site_settings")
-    .select("*")
-    .eq("id", 1)
-    .maybeSingle();
+const LEGACY_CONCEPT_WORDS = [
+  "ai-generated",
+  "ai generated",
+  "ai concept",
+  "concept portfolio",
+  "golden gate office",
+  "lakeview villa",
+  "emerald corporate hub",
+  "shwe taung residence"
+];
 
 
-  if (error) {
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
-    console.warn(
-      "Could not load website settings:",
-      error.message
-    );
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    if (year) {
+      year.textContent =
+        new Date().getFullYear();
+    }
 
-    return;
+    loadProjects();
   }
+);
 
 
-  if (!data) return;
-
-
-  /* Company name */
-
-  document
-    .querySelectorAll("[data-setting='company_name']")
-    .forEach(el => {
-
-      el.textContent =
-        data.company_name ||
-        "Handcraft Myanmar Company Limited";
-
-    });
-
-
-  /* Email */
-
-  document
-    .querySelectorAll("[data-setting='email']")
-    .forEach(el => {
-
-      el.textContent =
-        data.email || "";
-
-      if (el.tagName === "A") {
-
-        el.href =
-          data.email
-            ? `mailto:${data.email}`
-            : "#";
-
-      }
-
-    });
-
-
-  /* Phone */
-
-  document
-    .querySelectorAll("[data-setting='phone']")
-    .forEach(el => {
-
-      el.textContent =
-        data.phone || "";
-
-      if (el.tagName === "A") {
-
-        el.href =
-          data.phone
-            ? `tel:${data.phone.replace(/\s+/g, "")}`
-            : "#";
-
-      }
-
-    });
-
-
-  /* Address */
-
-  document
-    .querySelectorAll("[data-setting='address']")
-    .forEach(el => {
-
-      el.textContent =
-        data.address || "";
-
-    });
-
-
-  /* Hero title */
-
-  document
-    .querySelectorAll("[data-setting='hero_title']")
-    .forEach(el => {
-
-      el.textContent =
-        data.hero_title ||
-        el.textContent;
-
-    });
-
-
-  /* Hero subtitle */
-
-  document
-    .querySelectorAll("[data-setting='hero_subtitle']")
-    .forEach(el => {
-
-      el.textContent =
-        data.hero_subtitle ||
-        el.textContent;
-
-    });
-
-
-  /* About title */
-
-  document
-    .querySelectorAll("[data-setting='about_title']")
-    .forEach(el => {
-
-      el.textContent =
-        data.about_title ||
-        el.textContent;
-
-    });
-
-
-  /* About body */
-
-  document
-    .querySelectorAll("[data-setting='about_body']")
-    .forEach(el => {
-
-      el.textContent =
-        data.about_body ||
-        el.textContent;
-
-    });
-
-
-  /* Google Maps */
-
-  if (data.map_embed_url) {
-
-    document
-      .querySelectorAll(
-        "[data-setting='map_embed_url']"
-      )
-      .forEach(el => {
-
-        if (
-          el.tagName === "IFRAME"
-        ) {
-
-          el.src =
-            data.map_embed_url;
-
-        }
-
-      });
-
-  }
-
-}
-
-
-/* =========================
+/* =========================================================
    LOAD PROJECTS
-========================= */
+========================================================= */
 
 async function loadProjects() {
 
-  if (!grid) return;
+  if (!grid) {
+    console.error(
+      "Handcraft: #project-grid was not found."
+    );
+    return;
+  }
 
+  grid.innerHTML = `
+    <div class="loading-projects">
+      Loading our projects...
+    </div>
+  `;
 
-  grid.innerHTML =
-    `
-      <div class="loading-projects">
-        Loading our projects...
-      </div>
-    `;
-
-
-  const { data, error } = await sb
+  const {
+    data,
+    error
+  } = await sb
     .from("projects")
     .select(`
       *,
@@ -235,7 +112,6 @@ async function loadProjects() {
         sort_order
       )
     `)
-    .eq("published", true)
     .order("sort_order", {
       ascending: true
     })
@@ -243,93 +119,205 @@ async function loadProjects() {
       ascending: false
     });
 
-
   if (error) {
 
     console.error(
-      "Project loading error:",
+      "Handcraft Supabase error:",
       error
     );
 
-
-    grid.innerHTML =
-      `
-        <div class="loading-projects">
-          Projects are temporarily unavailable.
-        </div>
-      `;
+    grid.innerHTML = `
+      <div class="loading-projects">
+        Our project portfolio is being updated.
+        Please check back shortly.
+      </div>
+    `;
 
     return;
   }
 
 
-  allProjects = data || [];
+  /*
+    Only show published projects.
+
+    The database/RLS already controls this for public
+    visitors, but this extra check makes the frontend
+    safer and clearer.
+  */
+
+  const projects =
+    (data || [])
+      .filter(project => {
+
+        if (
+          project.published === false
+        ) {
+          return false;
+        }
+
+        return !isLegacyConcept(project);
+      })
+      .map(normalizeProject);
 
 
-  allProjects.forEach(project => {
+  window.handcraftProjects =
+    projects;
 
-    project.project_images =
-      (project.project_images || [])
+
+  createFilters(projects);
+
+  renderProjects(projects);
+}
+
+
+/* =========================================================
+   NORMALIZE PROJECT
+========================================================= */
+
+function normalizeProject(project) {
+
+  let photos = [];
+
+
+  /*
+    New gallery system
+  */
+
+  if (
+    Array.isArray(
+      project.project_images
+    )
+  ) {
+
+    photos =
+      project.project_images
+        .filter(image =>
+          image &&
+          image.image_url
+        )
         .sort(
           (a, b) =>
             (a.sort_order || 0) -
             (b.sort_order || 0)
-        );
+        )
+        .map(image => ({
+          id: image.id,
+          url: image.image_url,
+          alt:
+            image.alt_text ||
+            project.title ||
+            "Handcraft Myanmar project"
+        }));
+  }
 
-  });
+
+  /*
+    Backward compatibility:
+    if an old project has image_url,
+    use it as the first image.
+  */
+
+  if (
+    photos.length === 0 &&
+    project.image_url
+  ) {
+
+    photos.push({
+      id: "main",
+      url: project.image_url,
+      alt:
+        project.title ||
+        "Handcraft Myanmar project"
+    });
+  }
 
 
-  makeFilters();
+  return {
+    ...project,
 
-  render(allProjects);
+    category:
+      project.category ||
+      "Construction",
 
+    location:
+      project.location ||
+      "",
+
+    description:
+      project.description ||
+      "",
+
+    photos
+  };
 }
 
 
-/* =========================
-   PROJECT FILTERS
-========================= */
+/* =========================================================
+   HIDE OLD AI CONCEPT PROJECTS
+========================================================= */
 
-function makeFilters() {
+function isLegacyConcept(project) {
 
-  if (!filters) return;
-
-
-  const preferredCategories = [
-    "Construction",
-    "Condominium Interior Design & Decoration",
-    "Renovation",
-    "Furniture"
-  ];
+  const text = [
+    project.title || "",
+    project.description || "",
+    project.location || ""
+  ]
+    .join(" ")
+    .toLowerCase();
 
 
-  const availableCategories =
-    preferredCategories.filter(category =>
-      allProjects.some(
-        project =>
-          project.category === category
+  return LEGACY_CONCEPT_WORDS.some(
+    word =>
+      text.includes(
+        word.toLowerCase()
       )
-    );
+  );
+}
+
+
+/* =========================================================
+   FILTER BUTTONS
+========================================================= */
+
+function createFilters(projects) {
+
+  if (!filters) {
+    return;
+  }
 
 
   const categories = [
     "All",
-    ...availableCategories
+    ...CATEGORIES.filter(
+      category =>
+        category !== "All" &&
+        projects.some(
+          project =>
+            project.category ===
+            category
+        )
+    )
   ];
 
 
   filters.innerHTML =
     categories
       .map(
-        category => `
-
+        (category, index) => `
           <button
-            class="filter ${category === "All" ? "active" : ""}"
-            data-category="${escapeAttribute(category)}"
+            class="filter ${
+              index === 0
+                ? "active"
+                : ""
+            }"
+            type="button"
+            data-category="${escapeHtml(
+              category
+            )}"
           >
             ${escapeHtml(category)}
           </button>
-
         `
       )
       .join("");
@@ -344,59 +332,74 @@ function makeFilters() {
         () => {
 
           filters
-            .querySelectorAll(".filter")
-            .forEach(btn =>
-              btn.classList.remove("active")
+            .querySelectorAll(
+              ".filter"
+            )
+            .forEach(
+              item =>
+                item.classList.remove(
+                  "active"
+                )
             );
 
 
-          button.classList.add("active");
+          button.classList.add(
+            "active"
+          );
 
 
           const category =
             button.dataset.category;
 
 
-          if (category === "All") {
+          if (
+            category === "All"
+          ) {
 
-            render(allProjects);
+            renderProjects(
+              projects
+            );
 
           } else {
 
-            render(
-              allProjects.filter(
+            renderProjects(
+              projects.filter(
                 project =>
-                  project.category === category
+                  project.category ===
+                  category
               )
             );
-
           }
-
         }
       );
-
     });
-
 }
 
 
-/* =========================
+/* =========================================================
    RENDER PROJECTS
-========================= */
+========================================================= */
 
-function render(projects) {
+function renderProjects(
+  projects
+) {
 
-  if (!grid) return;
+  if (!grid) {
+    return;
+  }
 
 
-  if (!projects.length) {
+  if (
+    !projects ||
+    projects.length === 0
+  ) {
 
-    grid.innerHTML =
-      `
-        <div class="loading-projects">
-          No projects in this category yet.
-        </div>
-      `;
+    grid.innerHTML = `
+      <div class="loading-projects">
+        New Handcraft Myanmar projects
+        will be added here soon.
+      </div>
+    `;
 
     return;
   }
@@ -404,236 +407,290 @@ function render(projects) {
 
   grid.innerHTML =
     projects
-      .map(projectCard)
+      .map(
+        (project, index) =>
+          projectCard(
+            project,
+            index
+          )
+      )
       .join("");
 
 
   grid
-    .querySelectorAll(".project-card")
+    .querySelectorAll(
+      ".project-card"
+    )
     .forEach(card => {
 
       card.addEventListener(
         "click",
         () => {
 
-          const id =
-            card.dataset.id;
-
           const project =
-            allProjects.find(
+            projects.find(
               item =>
-                item.id === id
+                item.id ===
+                card.dataset.id
             );
 
 
           if (project) {
-
-            openProject(project);
-
+            openProjectModal(
+              project
+            );
           }
-
         }
       );
-
     });
-
 }
 
 
-/* =========================
+/* =========================================================
    PROJECT CARD
-========================= */
+========================================================= */
 
-function projectCard(project) {
+function projectCard(
+  project,
+  index
+) {
 
-  const images =
-    project.project_images || [];
-
-
-  const firstImage =
-    images.length
-      ? images[0].image_url
-      : project.image_url;
+  const firstPhoto =
+    project.photos &&
+    project.photos.length
+      ? project.photos[0].url
+      : "";
 
 
   const photoCount =
-    images.length;
+    project.photos
+      ? project.photos.length
+      : 0;
+
+
+  const photoLabel =
+    photoCount > 1
+      ? `${photoCount} photos`
+      : photoCount === 1
+        ? "1 photo"
+        : "Project details";
 
 
   return `
-
     <article
       class="project-card"
-      data-id="${escapeAttribute(project.id)}"
+      data-id="${escapeHtml(
+        String(project.id)
+      )}"
     >
 
-      <div class="project-image">
-
-        ${
-          firstImage
-            ? `
-              <img
-                src="${escapeAttribute(firstImage)}"
-                alt="${escapeAttribute(
-                  images[0]?.alt_text ||
-                  project.title ||
-                  "Handcraft Myanmar project"
-                )}"
-                loading="lazy"
-              >
-            `
-            : `
-              <div class="project-no-image">
-                Handcraft Myanmar
-              </div>
-            `
-        }
-
-
-        ${
-          photoCount > 1
-            ? `
-              <span class="photo-count">
-                ${photoCount} Photos
-              </span>
-            `
-            : ""
-        }
-
-      </div>
+      ${
+        firstPhoto
+          ? `
+            <img
+              src="${escapeHtml(
+                firstPhoto
+              )}"
+              alt="${escapeHtml(
+                project.title ||
+                "Handcraft Myanmar project"
+              )}"
+              loading="lazy"
+            >
+          `
+          : `
+            <div
+              style="
+                aspect-ratio:16/10;
+                background:#ddd;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                color:#777;
+                font-size:12px;
+                letter-spacing:.08em;
+                text-transform:uppercase;
+              "
+            >
+              Project image coming soon
+            </div>
+          `
+      }
 
 
       <div class="project-info">
 
-        <div class="project-category">
+        <div
+          style="
+            font-size:10px;
+            letter-spacing:.12em;
+            text-transform:uppercase;
+            margin-bottom:7px;
+            color:rgba(255,255,255,.75);
+          "
+        >
           ${escapeHtml(
-            project.category || ""
+            project.category ||
+            "Project"
           )}
         </div>
 
 
         <h3>
           ${escapeHtml(
-            project.title || "Project"
+            project.title ||
+            "Handcraft Myanmar Project"
           )}
         </h3>
 
 
-        ${
-          project.location
-            ? `
-              <p class="project-location">
-                ${escapeHtml(
+        <p>
+          ${
+            project.location
+              ? escapeHtml(
                   project.location
-                )}
-              </p>
-            `
-            : ""
-        }
-
-
-        ${
-          project.description
-            ? `
-              <p class="project-description">
-                ${escapeHtml(
-                  project.description
-                )}
-              </p>
-            `
-            : ""
-        }
+                ) +
+                " · "
+              : ""
+          }
+          ${escapeHtml(
+            photoLabel
+          )}
+        </p>
 
       </div>
 
     </article>
-
   `;
-
 }
 
 
-/* =========================
-   PROJECT GALLERY MODAL
-========================= */
+/* =========================================================
+   PROJECT MODAL
+========================================================= */
 
-function openProject(project) {
+function openProjectModal(
+  project
+) {
 
-  currentProject = project;
+  closeProjectModal();
 
 
-  let modal =
-    document.getElementById(
-      "project-modal"
+  const modal =
+    document.createElement(
+      "div"
     );
 
-
-  if (!modal) {
-
-    modal =
-      document.createElement("div");
-
-    modal.id =
-      "project-modal";
-
-    modal.className =
-      "project-modal";
-
-    document.body.appendChild(
-      modal
-    );
-
-  }
+  modal.className =
+    "project-modal open";
 
 
-  const images =
-    project.project_images || [];
+  modal.id =
+    "handcraft-project-modal";
+
+
+  const photos =
+    project.photos || [];
+
+
+  const gallery =
+    photos.length
+      ? photos
+          .map(
+            photo => `
+              <img
+                src="${escapeHtml(
+                  photo.url
+                )}"
+                alt="${escapeHtml(
+                  photo.alt ||
+                  project.title
+                )}"
+                loading="lazy"
+              >
+            `
+          )
+          .join("")
+      : `
+          <div
+            style="
+              padding:80px;
+              text-align:center;
+              color:#777;
+              grid-column:1/-1;
+            "
+          >
+            Project photos will be added soon.
+          </div>
+        `;
 
 
   modal.innerHTML = `
 
-    <div class="project-modal-backdrop"></div>
-
-
-    <div class="project-modal-content">
-
-      <button
-        class="project-modal-close"
-        aria-label="Close"
-      >
-        ×
-      </button>
-
+    <div class="project-modal-inner">
 
       <div class="project-modal-header">
 
         <div>
 
-          <div class="project-category">
+          <div
+            style="
+              margin-bottom:8px;
+              color:#b18a52;
+              font-size:10px;
+              font-weight:700;
+              letter-spacing:.18em;
+              text-transform:uppercase;
+            "
+          >
             ${escapeHtml(
-              project.category || ""
+              project.category ||
+              "Project"
             )}
           </div>
 
           <h2>
             ${escapeHtml(
-              project.title || "Project"
+              project.title ||
+              "Handcraft Myanmar Project"
             )}
           </h2>
 
           ${
             project.location
               ? `
-                <p>
+                <div
+                  style="
+                    margin-top:6px;
+                    color:#777;
+                    font-size:12px;
+                  "
+                >
                   ${escapeHtml(
                     project.location
                   )}
-                </p>
+                </div>
               `
               : ""
           }
 
         </div>
+
+
+        <button
+          class="project-modal-close"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="project-gallery">
+
+        ${gallery}
 
       </div>
 
@@ -641,7 +698,9 @@ function openProject(project) {
       ${
         project.description
           ? `
-            <div class="project-modal-description">
+            <div
+              class="project-modal-description"
+            >
               ${escapeHtml(
                 project.description
               )}
@@ -650,155 +709,117 @@ function openProject(project) {
           : ""
       }
 
-
-      <div class="project-gallery">
-
-        ${
-          images.length
-            ? images
-                .map(
-                  image => `
-
-                    <div class="gallery-image">
-
-                      <img
-                        src="${escapeAttribute(
-                          image.image_url
-                        )}"
-                        alt="${escapeAttribute(
-                          image.alt_text ||
-                          project.title ||
-                          ""
-                        )}"
-                        loading="lazy"
-                      >
-
-                    </div>
-
-                  `
-                )
-                .join("")
-            : `
-                ${
-                  project.image_url
-                    ? `
-                      <div class="gallery-image">
-
-                        <img
-                          src="${escapeAttribute(
-                            project.image_url
-                          )}"
-                          alt="${escapeAttribute(
-                            project.title || ""
-                          )}"
-                        >
-
-                      </div>
-                    `
-                    : `
-                      <p>No project photographs available.</p>
-                    `
-                }
-              `
-        }
-
-      </div>
-
     </div>
-
   `;
 
 
-  modal.classList.add("open");
+  document.body.appendChild(
+    modal
+  );
 
 
-  const close =
-    () => {
-
-      modal.classList.remove(
-        "open"
-      );
-
-    };
+  document.body.style.overflow =
+    "hidden";
 
 
   modal
     .querySelector(
       ".project-modal-close"
     )
-    .onclick = close;
+    .addEventListener(
+      "click",
+      closeProjectModal
+    );
 
 
-  modal
-    .querySelector(
-      ".project-modal-backdrop"
-    )
-    .onclick = close;
+  modal.addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target ===
+        modal
+      ) {
+        closeProjectModal();
+      }
+    }
+  );
 
 
   document.addEventListener(
     "keydown",
-    function escapeHandler(e) {
+    handleModalEscape
+  );
+}
 
-      if (
-        e.key === "Escape"
-      ) {
 
-        close();
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
 
-        document.removeEventListener(
-          "keydown",
-          escapeHandler
-        );
+function closeProjectModal() {
 
-      }
+  const modal =
+    document.getElementById(
+      "handcraft-project-modal"
+    );
 
+
+  if (modal) {
+    modal.remove();
+  }
+
+
+  document.body.style.overflow =
+    "";
+
+
+  document.removeEventListener(
+    "keydown",
+    handleModalEscape
+  );
+}
+
+
+function handleModalEscape(
+  event
+) {
+
+  if (
+    event.key ===
+    "Escape"
+  ) {
+    closeProjectModal();
+  }
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(
+  value
+) {
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    character => {
+
+      const entities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      };
+
+      return (
+        entities[character] ||
+        character
+      );
     }
   );
-
 }
-
-
-/* =========================
-   YEAR
-========================= */
-
-document
-  .querySelectorAll(
-    "[data-current-year]"
-  )
-  .forEach(el => {
-
-    el.textContent =
-      new Date().getFullYear();
-
-  });
-
-
-const year =
-  document.getElementById(
-    "year"
-  );
-
-if (year) {
-
-  year.textContent =
-    new Date().getFullYear();
-
-}
-
-
-/* =========================
-   START WEBSITE
-========================= */
-
-async function start() {
-
-  await loadSettings();
-
-  await loadProjects();
-
-}
-
-
-start();
