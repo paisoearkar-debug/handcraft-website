@@ -210,11 +210,16 @@ $("settingsForm").addEventListener("submit", async (e) => {
   };
 
 
+  /*
+    IMPORTANT:
+    Use UPDATE instead of UPSERT because
+    the site_settings row with id=1 already exists.
+  */
+
   const { error } = await sb
     .from("site_settings")
-    .upsert(payload, {
-      onConflict: "id"
-    });
+    .update(payload)
+    .eq("id", 1);
 
 
   if (error) {
@@ -227,6 +232,12 @@ $("settingsForm").addEventListener("submit", async (e) => {
 
     return;
   }
+
+
+  currentSettings = {
+    ...currentSettings,
+    ...payload
+  };
 
 
   showMessage(
@@ -783,11 +794,6 @@ async function uploadProjectImages(
 
     }
 
-
-    /*
-      Supabase standard browser uploads
-      work best with reasonably sized images.
-    */
 
     if (file.size > 8 * 1024 * 1024) {
 
