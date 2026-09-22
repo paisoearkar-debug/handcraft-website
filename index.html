@@ -1,69 +1,647 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Handcraft Myanmar | Interior Design & Fit-Out</title>
-  <meta name="description" content="Handcraft Myanmar — architectural and interior design, furniture fit-out and construction services.">
-  <link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Handcraft Myanmar | Interior Design & Construction
+  </title>
+
+  <meta
+    name="description"
+    content="Handcraft Myanmar — architectural design, interior design, construction, renovation and custom furniture."
+  >
+
+  <link
+    rel="stylesheet"
+    href="assets/style.css"
+  >
 </head>
+
+
 <body>
-<header class="site-header">
-  <a class="brand" href="#home">HANDCRAFT<span> MYANMAR</span></a>
-  <button class="menu" aria-label="Open menu">☰</button>
-  <nav>
-    <a href="#home">Home</a><a href="#about">About Us</a><a href="#projects">Our Projects</a><a href="#contact">Contact Us</a>
-  </nav>
-</header>
 
-<main>
-<section id="home" class="hero">
-  <div class="hero-overlay">
-    <p class="eyebrow">DESIGN • BUILD • FIT-OUT</p>
-    <h1>We turn spaces into places people remember.</h1>
-    <p>Architectural and interior design, construction, furniture fit-out and decoration solutions in Myanmar.</p>
-    <div class="actions"><a class="btn" href="#projects">View Projects</a><a class="btn ghost" href="#contact">Start a Project</a></div>
-  </div>
-</section>
+  <!-- =========================
+       HEADER
+  ========================== -->
 
-<section id="about" class="section two-col">
-  <div>
-    <p class="eyebrow">ABOUT US</p>
-    <h2>Built with craft. Designed with purpose.</h2>
-  </div>
-  <div>
-    <p>Handcraft Myanmar is a design and fit-out company focused on creating practical, refined and memorable spaces.</p>
-    <p>Our capabilities cover architectural and interior design, furniture fit-out, construction, decoration and project delivery.</p>
-    <p>Based in South Oakklapa, Yangon — reach us at <a href="mailto:business.handcraft@gmail.com">business.handcraft@gmail.com</a> or <a href="tel:+959453320798">09453320798</a>.</p>
-    <div class="stats"><div><b>01</b><span>Design</span></div><div><b>02</b><span>Build</span></div><div><b>03</b><span>Fit-Out</span></div></div>
-  </div>
-</section>
+  <header class="site-header">
 
-<section id="projects" class="section projects-section">
-  <div class="section-head"><div><p class="eyebrow">PORTFOLIO</p><h2>Our Projects</h2></div><div id="filters" class="filters"></div></div>
-  <div id="project-grid" class="project-grid"><div class="loading">Loading projects…</div></div>
-</section>
+    <div class="container header-inner">
 
-<section id="contact" class="section contact">
-  <div>
-    <p class="eyebrow">CONTACT</p>
-    <h2>Let's build something exceptional.</h2>
-    <p>Tell us what you are planning and our team will get back to you.</p>
-    <div class="contact-list">
-      <p><b>Email</b><br><a href="mailto:business.handcraft@gmail.com">business.handcraft@gmail.com</a></p>
-      <p><b>Phone</b><br><a href="tel:+959453320798">09453320798</a></p>
-      <p><b>Address</b><br>No. 120, Pinya Street 18, Thanthumar Road, Ward-5, South Oakklapa Township, Yangon, 11091</p>
+      <a
+        class="brand"
+        href="#home"
+      >
+        <span
+          data-setting="company_name"
+        >
+          HANDCRAFT
+        </span>
+
+        <small>
+          MYANMAR
+        </small>
+      </a>
+
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
+
+
+      <nav
+        class="main-nav"
+        id="mainNav"
+      >
+
+        <a href="#home">
+          Home
+        </a>
+
+        <a href="#about">
+          About Us
+        </a>
+
+        <a href="#projects">
+          Projects
+        </a>
+
+        <a href="#contact">
+          Contact Us
+        </a>
+
+      </nav>
+
     </div>
-  </div>
-  <div class="map-wrap">
-    <iframe title="Handcraft Myanmar location" src="https://www.google.com/maps?q=No.+120+Pinya+Street+18+Thanthumar+Road+Ward-5+South+Okklapa+Township+Yangon+11091+Myanmar&output=embed" loading="lazy"></iframe>
-  </div>
-</section>
-</main>
 
-<footer><div class="footer-main"><div>© <span id="year"></span> Handcraft Myanmar. All rights reserved.</div><div class="footer-contact"><a href="mailto:business.handcraft@gmail.com">business.handcraft@gmail.com</a><span> · </span><a href="tel:+959453320798">09453320798</a><span> · </span><span>No. 120, Pinya Street 18, South Oakklapa, Yangon 11091</span></div></div><a href="admin/">Admin</a></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/app.js"></script>
-<script>window.__CF$cv$params={r:'a3e90eb06ef8fdf2',t:'MTc4OTk5MzU3Nw==',u:'01a0c3ee6d1d746d8e334c75e96b3398',ut:'tuZ0TQeLdfTUejbXFjVXDgTX6T8vpsDRw.NurRfelFg-1789993577-1.2.1.1-SwXYGVZwxNqprfN0As4YW66un5e9bA7EawtiH.C2hKsySS6tgp6Bd.AjlNlLgJjQwiebYNpSFw1jDHelVzopedsHEC.8AIhJfBXbFWR1iKo',i:60};(function(){if(!document.body)return;var s=document.createElement('script');s.src='/cdn-cgi/challenge-platform/scripts/precursor/main.js';document.head.appendChild(s);})();</script></body>
+  </header>
+
+
+
+  <main>
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <section
+      id="home"
+      class="hero"
+    >
+
+      <div class="hero-overlay"></div>
+
+
+      <div class="container hero-content">
+
+        <div class="hero-eyebrow">
+          DESIGN • BUILD • FIT-OUT
+        </div>
+
+
+        <h1 data-setting="hero_title">
+          We turn spaces into places
+          people remember.
+        </h1>
+
+
+        <p data-setting="hero_subtitle">
+          Architectural design, interior design,
+          construction, renovation and custom
+          furniture solutions in Myanmar.
+        </p>
+
+
+        <div class="hero-actions">
+
+          <a
+            class="btn btn-primary"
+            href="#projects"
+          >
+            View Our Projects
+          </a>
+
+
+          <a
+            class="btn btn-outline"
+            href="#contact"
+          >
+            Contact Us
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         ABOUT
+    ========================== -->
+
+    <section
+      id="about"
+      class="section about-section"
+    >
+
+      <div class="container about-grid">
+
+        <div>
+
+          <div class="section-label">
+            ABOUT HANDCRAFT
+          </div>
+
+
+          <h2 data-setting="about_title">
+            Creating spaces with
+            purpose and craftsmanship.
+          </h2>
+
+        </div>
+
+
+        <div>
+
+          <p
+            class="about-text"
+            data-setting="about_body"
+          >
+            Handcraft Myanmar Company Limited
+            provides architectural design, interior
+            design, construction, decoration,
+            renovation and furniture fit-out
+            solutions.
+
+            We combine thoughtful design,
+            practical construction and detailed
+            craftsmanship to create spaces that
+            are functional, comfortable and
+            distinctive.
+          </p>
+
+
+          <a
+            class="text-link"
+            href="#contact"
+          >
+            Discuss your project →
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         SERVICES
+    ========================== -->
+
+    <section
+      class="section services-section"
+    >
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="section-label">
+            WHAT WE DO
+          </div>
+
+          <h2>
+            From concept to completion.
+          </h2>
+
+        </div>
+
+
+        <div class="services-grid">
+
+          <article class="service-card">
+
+            <span class="service-number">
+              01
+            </span>
+
+            <h3>
+              Construction
+            </h3>
+
+            <p>
+              Complete construction solutions
+              with attention to structure,
+              quality and finishing.
+            </p>
+
+          </article>
+
+
+          <article class="service-card">
+
+            <span class="service-number">
+              02
+            </span>
+
+            <h3>
+              Condominium Interior Design
+            </h3>
+
+            <p>
+              Complete condominium interior
+              design and decoration tailored
+              to modern living.
+            </p>
+
+          </article>
+
+
+          <article class="service-card">
+
+            <span class="service-number">
+              03
+            </span>
+
+            <h3>
+              Renovation
+            </h3>
+
+            <p>
+              Transforming existing spaces
+              through thoughtful renovation
+              and interior upgrades.
+            </p>
+
+          </article>
+
+
+          <article class="service-card">
+
+            <span class="service-number">
+              04
+            </span>
+
+            <h3>
+              Furniture
+            </h3>
+
+            <p>
+              Custom furniture and built-in
+              solutions designed to work
+              naturally with each space.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         PROJECTS
+    ========================== -->
+
+    <section
+      id="projects"
+      class="section projects-section"
+    >
+
+      <div class="container">
+
+        <div class="section-heading projects-heading">
+
+          <div>
+
+            <div class="section-label">
+              SELECTED WORK
+            </div>
+
+            <h2>
+              Our Projects
+            </h2>
+
+          </div>
+
+
+          <p>
+            Explore our completed work across
+            construction, interior design,
+            renovation and furniture.
+          </p>
+
+        </div>
+
+
+        <!-- FILTERS -->
+
+        <div
+          id="filters"
+          class="project-filters"
+        >
+
+          <button
+            class="filter active"
+            data-category="All"
+          >
+            All
+          </button>
+
+        </div>
+
+
+        <!-- PROJECT GRID -->
+
+        <div
+          id="project-grid"
+          class="project-grid"
+        >
+
+          <div class="loading-projects">
+            Loading our projects...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         CONTACT
+    ========================== -->
+
+    <section
+      id="contact"
+      class="section contact-section"
+    >
+
+      <div class="container contact-grid">
+
+        <div>
+
+          <div class="section-label">
+            START A PROJECT
+          </div>
+
+
+          <h2>
+            Let's create something
+            exceptional.
+          </h2>
+
+
+          <p>
+            Tell us about your project and
+            our team will be happy to discuss
+            your design, construction,
+            renovation or furniture needs.
+          </p>
+
+        </div>
+
+
+        <div class="contact-details">
+
+          <div class="contact-item">
+
+            <span>
+              COMPANY
+            </span>
+
+            <strong
+              data-setting="company_name"
+            >
+              Handcraft Myanmar Company Limited
+            </strong>
+
+          </div>
+
+
+          <div class="contact-item">
+
+            <span>
+              EMAIL
+            </span>
+
+            <a
+              data-setting="email"
+              href="mailto:"
+            >
+              Contact us
+            </a>
+
+          </div>
+
+
+          <div class="contact-item">
+
+            <span>
+              PHONE
+            </span>
+
+            <a
+              data-setting="phone"
+              href="tel:"
+            >
+              Contact us
+            </a>
+
+          </div>
+
+
+          <div class="contact-item">
+
+            <span>
+              ADDRESS
+            </span>
+
+            <strong
+              data-setting="address"
+            >
+              Myanmar
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- GOOGLE MAP -->
+
+      <div class="container map-container">
+
+        <iframe
+          data-setting="map_embed_url"
+          title="Handcraft Myanmar location"
+          src="https://www.google.com/maps?q=Yangon%20Myanmar&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer class="site-footer">
+
+    <div class="container footer-inner">
+
+      <div>
+
+        <strong
+          data-setting="company_name"
+        >
+          HANDCRAFT MYANMAR
+        </strong>
+
+        <p>
+          Design • Build • Fit-Out
+        </p>
+
+      </div>
+
+
+      <div class="footer-links">
+
+        <a href="#home">
+          Home
+        </a>
+
+        <a href="#about">
+          About
+        </a>
+
+        <a href="#projects">
+          Projects
+        </a>
+
+        <a href="#contact">
+          Contact
+        </a>
+
+      </div>
+
+
+      <div>
+
+        ©
+        <span id="year"></span>
+        Handcraft Myanmar
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- =========================
+       SUPABASE
+  ========================== -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <!-- =========================
+       MOBILE MENU
+  ========================== -->
+
+  <script>
+
+    const menuToggle =
+      document.getElementById(
+        "menuToggle"
+      );
+
+    const mainNav =
+      document.getElementById(
+        "mainNav"
+      );
+
+
+    if (
+      menuToggle &&
+      mainNav
+    ) {
+
+      menuToggle.addEventListener(
+        "click",
+        () => {
+
+          mainNav.classList.toggle(
+            "open"
+          );
+
+        }
+      );
+
+
+      mainNav
+        .querySelectorAll("a")
+        .forEach(link => {
+
+          link.addEventListener(
+            "click",
+            () => {
+
+              mainNav.classList.remove(
+                "open"
+              );
+
+            }
+          );
+
+        });
+
+    }
+
+  </script>
+
+
+  <!-- =========================
+       WEBSITE APP
+  ========================== -->
+
+  <script
+    src="assets/app.js"
+  ></script>
+
+</body>
+
 </html>
