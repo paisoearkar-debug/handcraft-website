@@ -12,13 +12,7 @@ let editing = null;
 let currentSettings = null;
 let lastSavedProjectId = null;
 
-
-/* =========================
-   STARTUP
-========================= */
-
 async function boot() {
-
   const {
     data: { session }
   } = await sb.auth.getSession();
@@ -28,39 +22,24 @@ async function boot() {
   } else {
     showLogin();
   }
-
 }
 
-
-/* =========================
-   LOGIN / LOGOUT
-========================= */
-
 function showLogin() {
-
   $("login").style.display = "block";
   $("dashboard").style.display = "none";
   $("logoutBtn").style.display = "none";
-
 }
 
-
 function showDashboard() {
-
   $("login").style.display = "none";
   $("dashboard").style.display = "block";
   $("logoutBtn").style.display = "inline-block";
 
   loadSettings();
   loadProjects();
-
 }
 
-
-/* LOGIN */
-
 $("loginForm").addEventListener("submit", async (e) => {
-
   e.preventDefault();
 
   const email = $("email").value.trim();
@@ -78,7 +57,6 @@ $("loginForm").addEventListener("submit", async (e) => {
   });
 
   if (error) {
-
     showMessage(
       "loginMessage",
       error.message,
@@ -91,27 +69,15 @@ $("loginForm").addEventListener("submit", async (e) => {
   $("loginMessage").classList.remove("show");
 
   showDashboard();
-
 });
 
-
-/* LOGOUT */
-
 $("logoutBtn").addEventListener("click", async () => {
-
   await sb.auth.signOut();
 
   location.reload();
-
 });
 
-
-/* =========================
-   WEBSITE SETTINGS
-========================= */
-
 async function loadSettings() {
-
   const { data, error } = await sb
     .from("site_settings")
     .select("*")
@@ -119,7 +85,6 @@ async function loadSettings() {
     .maybeSingle();
 
   if (error) {
-
     showMessage(
       "settingsMessage",
       error.message,
@@ -161,14 +126,9 @@ async function loadSettings() {
 
   $("aboutBody").value =
     data?.about_body || "";
-
 }
 
-
-/* SAVE SETTINGS */
-
 $("settingsForm").addEventListener("submit", async (e) => {
-
   e.preventDefault();
 
   showMessage(
@@ -178,7 +138,6 @@ $("settingsForm").addEventListener("submit", async (e) => {
   );
 
   const payload = {
-
     id: 1,
 
     company_name:
@@ -210,18 +169,14 @@ $("settingsForm").addEventListener("submit", async (e) => {
 
     updated_at:
       new Date().toISOString()
-
   };
-
 
   const { error } = await sb
     .from("site_settings")
     .update(payload)
     .eq("id", 1);
 
-
   if (error) {
-
     showMessage(
       "settingsMessage",
       "Error: " + error.message,
@@ -231,31 +186,21 @@ $("settingsForm").addEventListener("submit", async (e) => {
     return;
   }
 
-
   currentSettings = {
     ...currentSettings,
     ...payload
   };
-
 
   showMessage(
     "settingsMessage",
     "Website settings saved successfully.",
     false
   );
-
 });
 
-
-/* =========================
-   PROJECTS
-========================= */
-
 async function loadProjects() {
-
   $("list").innerHTML =
     "<p class='muted'>Loading projects...</p>";
-
 
   const { data, error } = await sb
     .from("projects")
@@ -275,41 +220,28 @@ async function loadProjects() {
       ascending: false
     });
 
-
   if (error) {
-
     $("list").innerHTML =
       `<div class="notice show">${escapeHtml(error.message)}</div>`;
 
     return;
   }
 
-
   const projects = data || [];
 
-
   if (!projects.length) {
-
     $("list").innerHTML =
       "<p class='muted'>No projects yet. Create your first project above.</p>";
 
     return;
   }
 
-
   $("list").innerHTML = projects
     .map(renderProject)
     .join("");
-
 }
 
-
-/* =========================
-   PROJECT CARD
-========================= */
-
 function renderProject(project) {
-
   const images =
     (project.project_images || [])
       .sort(
@@ -318,16 +250,13 @@ function renderProject(project) {
           (b.sort_order || 0)
       );
 
-
   const publishedBadge =
     project.published
       ? `<span class="badge badge-published">Published</span>`
       : `<span class="badge badge-hidden">Hidden</span>`;
 
-
   const photoCount =
     images.length;
-
 
   return `
 
@@ -364,7 +293,6 @@ function renderProject(project) {
 
         </div>
 
-
         <div class="actions">
 
           <button
@@ -385,7 +313,6 @@ function renderProject(project) {
 
       </div>
 
-
       ${
         project.description
           ? `
@@ -395,7 +322,6 @@ function renderProject(project) {
           `
           : ""
       }
-
 
       ${
         images.length
@@ -440,32 +366,20 @@ function renderProject(project) {
   `;
 }
 
-
-/* =========================
-   NEW PROJECT
-========================= */
-
 $("newProjectBtn").addEventListener("click", () => {
-
   resetProjectForm();
 
   window.scrollTo({
     top: 500,
     behavior: "smooth"
   });
-
 });
-
 
 $("cancelEditBtn").addEventListener("click", () => {
-
   resetProjectForm();
-
 });
 
-
 function resetProjectForm() {
-
   editing = null;
   lastSavedProjectId = null;
 
@@ -490,13 +404,7 @@ function resetProjectForm() {
   if ($("aiMessage")) {
     $("aiMessage").classList.remove("show");
   }
-
 }
-
-
-/* =========================
-   EDIT PROJECT
-========================= */
 
 window.editProject = async function(id) {
 
@@ -514,18 +422,14 @@ window.editProject = async function(id) {
     .eq("id", id)
     .single();
 
-
   if (error) {
-
     alert(error.message);
 
     return;
   }
 
-
   editing = data;
   lastSavedProjectId = data.id;
-
 
   $("id").value =
     data.id;
@@ -548,58 +452,69 @@ window.editProject = async function(id) {
   $("published").checked =
     data.published !== false;
 
-
   $("projectEditorTitle").textContent =
     "Edit Project";
-
 
   renderCurrentGallery(
     data.project_images || []
   );
 
-
   if ($("aiMessage")) {
     $("aiMessage").classList.remove("show");
   }
-
 
   window.scrollTo({
     top: 500,
     behavior: "smooth"
   });
-
 };
-
-
-/* =========================
-   CURRENT GALLERY
-========================= */
 
 function renderCurrentGallery(images) {
 
-  $("currentGallerySection").style.display =
+  const section = $("currentGallerySection");
+  const gallery = $("currentGallery");
+
+  section.style.display =
     images.length
       ? "block"
       : "none";
 
+  const sortedImages = [...images].sort(
+    (a, b) =>
+      (a.sort_order || 0) -
+      (b.sort_order || 0)
+  );
 
-  $("currentGallery").innerHTML =
-    images
-      .sort(
-        (a, b) =>
-          (a.sort_order || 0) -
-          (b.sort_order || 0)
-      )
-      .map(image => `
+  gallery.innerHTML =
+    sortedImages
+      .map((image, index) => `
 
-        <div class="gallery-item">
+        <div
+          class="gallery-item"
+          draggable="true"
+          data-image-id="${escapeAttribute(image.id)}"
+          title="Drag this photo to change its order"
+          style="cursor:grab; position:relative;"
+        >
+
+          ${
+            index === 0
+              ? `<div style="position:absolute;top:8px;left:8px;z-index:2;background:#111;color:#fff;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.08em;">COVER</div>`
+              : ""
+          }
+
+          <div style="position:absolute;right:8px;top:8px;z-index:2;background:rgba(255,255,255,.92);color:#111;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:600;">
+            ↕ Drag
+          </div>
 
           <img
             src="${escapeAttribute(image.image_url)}"
             alt="${escapeAttribute(image.alt_text || "")}"
+            draggable="false"
           >
 
           <button
+            type="button"
             onclick="deleteProjectImage(
               '${image.id}',
               '${editing.id}',
@@ -614,24 +529,230 @@ function renderCurrentGallery(images) {
       `)
       .join("");
 
+  let draggedItem = null;
+
+  gallery
+    .querySelectorAll(".gallery-item")
+    .forEach(item => {
+
+      item.addEventListener("dragstart", (event) => {
+
+        draggedItem = item;
+
+        item.style.opacity = "0.55";
+        item.style.cursor = "grabbing";
+
+        event.dataTransfer.effectAllowed = "move";
+
+        event.dataTransfer.setData(
+          "text/plain",
+          item.dataset.imageId
+        );
+
+      });
+
+      item.addEventListener("dragover", (event) => {
+
+        event.preventDefault();
+
+        if (!draggedItem || draggedItem === item) {
+          return;
+        }
+
+        const rect =
+          item.getBoundingClientRect();
+
+        const insertAfter =
+          event.clientY >
+          rect.top + rect.height / 2;
+
+        if (insertAfter) {
+
+          item.parentNode.insertBefore(
+            draggedItem,
+            item.nextSibling
+          );
+
+        } else {
+
+          item.parentNode.insertBefore(
+            draggedItem,
+            item
+          );
+
+        }
+
+      });
+
+      item.addEventListener("dragend", async () => {
+
+        if (!draggedItem) {
+          return;
+        }
+
+        draggedItem.style.opacity = "1";
+        draggedItem.style.cursor = "grab";
+
+        draggedItem = null;
+
+        await saveGalleryOrder();
+
+      });
+
+    });
+
 }
 
+async function saveGalleryOrder() {
 
-/* =========================
-   SAVE PROJECT
-========================= */
+  const gallery =
+    $("currentGallery");
+
+  if (!gallery || !editing?.id) {
+    return;
+  }
+
+  const items =
+    Array.from(
+      gallery.querySelectorAll(".gallery-item")
+    );
+
+  if (!items.length) {
+    return;
+  }
+
+  showMessage(
+    "projectMessage",
+    "Saving photo order...",
+    false
+  );
+
+  const updates =
+    items.map((item, index) =>
+      sb
+        .from("project_images")
+        .update({
+          sort_order: index
+        })
+        .eq(
+          "id",
+          item.dataset.imageId
+        )
+    );
+
+  const results =
+    await Promise.all(updates);
+
+  const failed =
+    results.find(
+      result => result.error
+    );
+
+  if (failed) {
+
+    showMessage(
+      "projectMessage",
+      "Could not save photo order: " +
+        failed.error.message,
+      true
+    );
+
+    return;
+  }
+
+  const firstItem =
+    items[0];
+
+  const firstImage =
+    editing.project_images?.find(
+      image =>
+        image.id ===
+        firstItem.dataset.imageId
+    );
+
+  if (firstImage) {
+
+    const { error: coverError } =
+      await sb
+        .from("projects")
+        .update({
+          image_url:
+            firstImage.image_url
+        })
+        .eq(
+          "id",
+          editing.id
+        );
+
+    if (coverError) {
+
+      showMessage(
+        "projectMessage",
+        "Photo order saved, but the cover image could not be updated: " +
+          coverError.message,
+        true
+      );
+
+      return;
+    }
+
+  }
+
+  if (editing.project_images) {
+
+    const imageMap =
+      new Map(
+        editing.project_images.map(
+          image => [
+            image.id,
+            image
+          ]
+        )
+      );
+
+    editing.project_images =
+      items
+        .map((item, index) => {
+
+          const image =
+            imageMap.get(
+              item.dataset.imageId
+            );
+
+          return image
+            ? {
+                ...image,
+                sort_order: index
+              }
+            : null;
+
+        })
+        .filter(Boolean);
+
+  }
+
+  renderCurrentGallery(
+    editing.project_images || []
+  );
+
+  showMessage(
+    "projectMessage",
+    "Photo order saved successfully. The first photo is now the project cover.",
+    false
+  );
+
+  await loadProjects();
+}
 
 $("projectForm").addEventListener("submit", async (e) => {
 
   e.preventDefault();
-
 
   showMessage(
     "projectMessage",
     "Saving project...",
     false
   );
-
 
   const payload = {
 
@@ -655,7 +776,6 @@ $("projectForm").addEventListener("submit", async (e) => {
 
   };
 
-
   if (!payload.title) {
 
     showMessage(
@@ -666,7 +786,6 @@ $("projectForm").addEventListener("submit", async (e) => {
 
     return;
   }
-
 
   if (!payload.category) {
 
@@ -679,19 +798,18 @@ $("projectForm").addEventListener("submit", async (e) => {
     return;
   }
 
-
   let projectId;
-
-
-  /* UPDATE */
 
   if (editing) {
 
-    const { error } = await sb
-      .from("projects")
-      .update(payload)
-      .eq("id", editing.id);
-
+    const { error } =
+      await sb
+        .from("projects")
+        .update(payload)
+        .eq(
+          "id",
+          editing.id
+        );
 
     if (error) {
 
@@ -704,22 +822,19 @@ $("projectForm").addEventListener("submit", async (e) => {
       return;
     }
 
-
-    projectId = editing.id;
+    projectId =
+      editing.id;
 
   }
-
-
-  /* CREATE */
 
   else {
 
-    const { data, error } = await sb
-      .from("projects")
-      .insert(payload)
-      .select()
-      .single();
-
+    const { data, error } =
+      await sb
+        .from("projects")
+        .insert(payload)
+        .select()
+        .single();
 
     if (error) {
 
@@ -732,19 +847,15 @@ $("projectForm").addEventListener("submit", async (e) => {
       return;
     }
 
-
-    projectId = data.id;
+    projectId =
+      data.id;
 
   }
-
-
-  /* UPLOAD PHOTOS */
 
   const files =
     Array.from(
       $("images").files || []
     );
-
 
   if (files.length) {
 
@@ -754,13 +865,11 @@ $("projectForm").addEventListener("submit", async (e) => {
       false
     );
 
-
     const uploadResult =
       await uploadProjectImages(
         projectId,
         files
       );
-
 
     if (!uploadResult.success) {
 
@@ -777,22 +886,15 @@ $("projectForm").addEventListener("submit", async (e) => {
 
   }
 
+  lastSavedProjectId =
+    projectId;
 
-  /*
-    IMPORTANT:
-    Keep the project open after saving.
-    This allows the user to immediately
-    use the AI generation button.
-  */
-
-  lastSavedProjectId = projectId;
-
-  $("id").value = projectId;
+  $("id").value =
+    projectId;
 
   editing = {
     id: projectId
   };
-
 
   showMessage(
     "projectMessage",
@@ -800,16 +902,11 @@ $("projectForm").addEventListener("submit", async (e) => {
     false
   );
 
-
   await loadProjects();
 
-
-  /*
-    Reload the current project's gallery
-    so newly uploaded photos are visible.
-  */
-
-  const { data: refreshedProject } = await sb
+  const {
+    data: refreshedProject
+  } = await sb
     .from("projects")
     .select(`
       *,
@@ -820,13 +917,16 @@ $("projectForm").addEventListener("submit", async (e) => {
         sort_order
       )
     `)
-    .eq("id", projectId)
+    .eq(
+      "id",
+      projectId
+    )
     .single();
-
 
   if (refreshedProject) {
 
-    editing = refreshedProject;
+    editing =
+      refreshedProject;
 
     renderCurrentGallery(
       refreshedProject.project_images || []
@@ -836,18 +936,12 @@ $("projectForm").addEventListener("submit", async (e) => {
 
 });
 
-
-/* =========================
-   UPLOAD PROJECT IMAGES
-========================= */
-
 async function uploadProjectImages(
   projectId,
   files
 ) {
 
   let uploaded = 0;
-
 
   for (const file of files) {
 
@@ -861,8 +955,10 @@ async function uploadProjectImages(
 
     }
 
-
-    if (file.size > 8 * 1024 * 1024) {
+    if (
+      file.size >
+      8 * 1024 * 1024
+    ) {
 
       return {
         success: false,
@@ -872,23 +968,21 @@ async function uploadProjectImages(
 
     }
 
-
     const extension =
       file.name
         .split(".")
         .pop()
         .toLowerCase();
 
-
     const filename =
       `${crypto.randomUUID()}.${extension}`;
-
 
     const storagePath =
       `projects/${projectId}/${filename}`;
 
-
-    const { error: uploadError } =
+    const {
+      error: uploadError
+    } =
       await sb
         .storage
         .from("project-images")
@@ -898,10 +992,10 @@ async function uploadProjectImages(
           {
             cacheControl: "3600",
             upsert: false,
-            contentType: file.type
+            contentType:
+              file.type
           }
         );
-
 
     if (uploadError) {
 
@@ -913,37 +1007,48 @@ async function uploadProjectImages(
 
     }
 
-
-    const { data: publicData } =
+    const {
+      data: publicData
+    } =
       sb
         .storage
         .from("project-images")
-        .getPublicUrl(storagePath);
-
+        .getPublicUrl(
+          storagePath
+        );
 
     const imageUrl =
       publicData.publicUrl;
 
-
-    const { data: existingImages } =
+    const {
+      data: existingImages
+    } =
       await sb
         .from("project_images")
         .select("sort_order")
-        .eq("project_id", projectId)
-        .order("sort_order", {
-          ascending: false
-        })
+        .eq(
+          "project_id",
+          projectId
+        )
+        .order(
+          "sort_order",
+          {
+            ascending: false
+          }
+        )
         .limit(1);
-
 
     const nextOrder =
       existingImages &&
       existingImages.length
-        ? Number(existingImages[0].sort_order || 0) + 1
+        ? Number(
+            existingImages[0].sort_order || 0
+          ) + 1
         : 0;
 
-
-    const { error: imageError } =
+    const {
+      error: imageError
+    } =
       await sb
         .from("project_images")
         .insert({
@@ -962,7 +1067,6 @@ async function uploadProjectImages(
 
         });
 
-
     if (imageError) {
 
       return {
@@ -973,29 +1077,43 @@ async function uploadProjectImages(
 
     }
 
-
-    /*
-      Keep the first image as the main
-      projects.image_url value for compatibility
-      with the existing website.
-    */
-
-    if (uploaded === 0) {
-
-      await sb
-        .from("projects")
-        .update({
-          image_url: imageUrl
-        })
-        .eq("id", projectId);
-
-    }
-
-
     uploaded++;
 
   }
 
+  const {
+    data: firstImage
+  } =
+    await sb
+      .from("project_images")
+      .select("image_url")
+      .eq(
+        "project_id",
+        projectId
+      )
+      .order(
+        "sort_order",
+        {
+          ascending: true
+        }
+      )
+      .limit(1)
+      .maybeSingle();
+
+  if (firstImage?.image_url) {
+
+    await sb
+      .from("projects")
+      .update({
+        image_url:
+          firstImage.image_url
+      })
+      .eq(
+        "id",
+        projectId
+      );
+
+  }
 
   return {
     success: true,
@@ -1005,26 +1123,14 @@ async function uploadProjectImages(
 
 }
 
-
-/* =========================
-   GENERATE PROJECT CONTENT
-   WITH AI
-========================= */
-
 $("generateAiBtn").addEventListener(
   "click",
   async () => {
-
-    /*
-      Determine which project the AI
-      should work on.
-    */
 
     const projectId =
       $("id").value ||
       editing?.id ||
       lastSavedProjectId;
-
 
     if (!projectId) {
 
@@ -1037,16 +1143,13 @@ $("generateAiBtn").addEventListener(
       return;
     }
 
-
     const button =
       $("generateAiBtn");
-
 
     button.disabled = true;
 
     button.textContent =
       "✨ AI is analyzing your project photos...";
-
 
     showMessage(
       "aiMessage",
@@ -1054,18 +1157,11 @@ $("generateAiBtn").addEventListener(
       false
     );
 
-
     try {
-
-      /*
-        Make sure the user still has
-        an authenticated Supabase session.
-      */
 
       const {
         data: { session }
       } = await sb.auth.getSession();
-
 
       if (!session) {
 
@@ -1075,21 +1171,19 @@ $("generateAiBtn").addEventListener(
 
       }
 
-
-      /*
-        Call the Supabase Edge Function.
-      */
-
-      const { data, error } =
+      const {
+        data,
+        error
+      } =
         await sb.functions.invoke(
           "generate-project-content",
           {
             body: {
-              projectId: projectId
+              projectId:
+                projectId
             }
           }
         );
-
 
       if (error) {
 
@@ -1105,7 +1199,6 @@ $("generateAiBtn").addEventListener(
 
       }
 
-
       if (!data) {
 
         throw new Error(
@@ -1114,12 +1207,6 @@ $("generateAiBtn").addEventListener(
 
       }
 
-
-      /*
-        Put the generated description
-        directly into the project editor.
-      */
-
       if (data.description) {
 
         $("description").value =
@@ -1127,29 +1214,25 @@ $("generateAiBtn").addEventListener(
 
       }
 
-
-      /*
-        Refresh the project from Supabase
-        so generated photo captions appear
-        in the current gallery.
-      */
-
       const {
         data: refreshedProject
-      } = await sb
-        .from("projects")
-        .select(`
-          *,
-          project_images (
-            id,
-            image_url,
-            alt_text,
-            sort_order
+      } =
+        await sb
+          .from("projects")
+          .select(`
+            *,
+            project_images (
+              id,
+              image_url,
+              alt_text,
+              sort_order
+            )
+          `)
+          .eq(
+            "id",
+            projectId
           )
-        `)
-        .eq("id", projectId)
-        .single();
-
+          .single();
 
       if (refreshedProject) {
 
@@ -1168,14 +1251,8 @@ $("generateAiBtn").addEventListener(
 
       }
 
-
-      /*
-        Build success message.
-      */
-
       let message =
         "✨ AI content generated successfully!";
-
 
       if (data.description) {
 
@@ -1184,14 +1261,12 @@ $("generateAiBtn").addEventListener(
 
       }
 
-
       if (data.short_description) {
 
         message +=
           "\nShort description generated.";
 
       }
-
 
       if (
         data.captions &&
@@ -1203,20 +1278,13 @@ $("generateAiBtn").addEventListener(
 
       }
 
-
       showMessage(
         "aiMessage",
         message,
         false
       );
 
-
-      /*
-        Refresh project list.
-      */
-
       await loadProjects();
-
 
     } catch (error) {
 
@@ -1224,7 +1292,6 @@ $("generateAiBtn").addEventListener(
         "AI generation failed:",
         error
       );
-
 
       showMessage(
         "aiMessage",
@@ -1235,7 +1302,6 @@ $("generateAiBtn").addEventListener(
 
     }
 
-
     button.disabled = false;
 
     button.textContent =
@@ -1243,11 +1309,6 @@ $("generateAiBtn").addEventListener(
 
   }
 );
-
-
-/* =========================
-   DELETE PROJECT IMAGE
-========================= */
 
 window.deleteProjectImage = async function(
   imageId,
@@ -1264,13 +1325,16 @@ window.deleteProjectImage = async function(
     return;
   }
 
-
-  const { error } =
+  const {
+    error
+  } =
     await sb
       .from("project_images")
       .delete()
-      .eq("id", imageId);
-
+      .eq(
+        "id",
+        imageId
+      );
 
   if (error) {
 
@@ -1282,35 +1346,32 @@ window.deleteProjectImage = async function(
     return;
   }
 
-
-  /*
-    Try to remove the physical file
-    from Supabase Storage as well.
-  */
-
   try {
 
     const marker =
       "/storage/v1/object/public/project-images/";
 
     const position =
-      imageUrl.indexOf(marker);
-
+      imageUrl.indexOf(
+        marker
+      );
 
     if (position !== -1) {
 
       const storagePath =
         decodeURIComponent(
           imageUrl.substring(
-            position + marker.length
+            position +
+            marker.length
           )
         );
-
 
       await sb
         .storage
         .from("project-images")
-        .remove([storagePath]);
+        .remove([
+          storagePath
+        ]);
 
     }
 
@@ -1323,23 +1384,27 @@ window.deleteProjectImage = async function(
 
   }
 
-
-  /*
-    If this was the main image,
-    select another remaining image.
-  */
-
-  const { data: remaining } =
+  const {
+    data: remaining
+  } =
     await sb
       .from("project_images")
       .select("*")
-      .eq("project_id", projectId)
-      .order("sort_order", {
-        ascending: true
-      });
+      .eq(
+        "project_id",
+        projectId
+      )
+      .order(
+        "sort_order",
+        {
+          ascending: true
+        }
+      );
 
-
-  if (remaining && remaining.length) {
+  if (
+    remaining &&
+    remaining.length
+  ) {
 
     await sb
       .from("projects")
@@ -1347,19 +1412,25 @@ window.deleteProjectImage = async function(
         image_url:
           remaining[0].image_url
       })
-      .eq("id", projectId);
+      .eq(
+        "id",
+        projectId
+      );
 
   } else {
 
     await sb
       .from("projects")
       .update({
-        image_url: null
+        image_url:
+          null
       })
-      .eq("id", projectId);
+      .eq(
+        "id",
+        projectId
+      );
 
   }
-
 
   if (
     editing &&
@@ -1375,15 +1446,9 @@ window.deleteProjectImage = async function(
 
   }
 
-
   await loadProjects();
 
 };
-
-
-/* =========================
-   DELETE PROJECT
-========================= */
 
 window.deleteProject = async function(id) {
 
@@ -1396,27 +1461,27 @@ window.deleteProject = async function(id) {
     return;
   }
 
-
-  /*
-    Get all images first so we can
-    clean the Storage files.
-  */
-
-  const { data: images } =
+  const {
+    data: images
+  } =
     await sb
       .from("project_images")
       .select("image_url")
-      .eq("project_id", id);
+      .eq(
+        "project_id",
+        id
+      );
 
-
-  /* Delete database project */
-
-  const { error } =
+  const {
+    error
+  } =
     await sb
       .from("projects")
       .delete()
-      .eq("id", id);
-
+      .eq(
+        "id",
+        id
+      );
 
   if (error) {
 
@@ -1428,12 +1493,10 @@ window.deleteProject = async function(id) {
     return;
   }
 
-
-  /*
-    Clean Storage
-  */
-
-  if (images && images.length) {
+  if (
+    images &&
+    images.length
+  ) {
 
     const marker =
       "/storage/v1/object/public/project-images/";
@@ -1443,7 +1506,9 @@ window.deleteProject = async function(id) {
         .map(image => {
 
           const position =
-            image.image_url.indexOf(marker);
+            image.image_url.indexOf(
+              marker
+            );
 
           if (position === -1) {
             return null;
@@ -1451,13 +1516,13 @@ window.deleteProject = async function(id) {
 
           return decodeURIComponent(
             image.image_url.substring(
-              position + marker.length
+              position +
+              marker.length
             )
           );
 
         })
         .filter(Boolean);
-
 
     if (paths.length) {
 
@@ -1470,7 +1535,6 @@ window.deleteProject = async function(id) {
 
   }
 
-
   if (
     editing &&
     editing.id === id
@@ -1480,7 +1544,6 @@ window.deleteProject = async function(id) {
 
   }
 
-
   if (
     lastSavedProjectId === id
   ) {
@@ -1489,25 +1552,14 @@ window.deleteProject = async function(id) {
 
   }
 
-
   await loadProjects();
 
 };
-
-
-/* =========================
-   REFRESH
-========================= */
 
 $("refreshProjectsBtn").addEventListener(
   "click",
   loadProjects
 );
-
-
-/* =========================
-   MESSAGES
-========================= */
 
 function showMessage(
   id,
@@ -1525,7 +1577,6 @@ function showMessage(
     message;
 
   el.classList.add("show");
-
 
   if (error) {
 
@@ -1547,33 +1598,37 @@ function showMessage(
 
 }
 
-
-/* =========================
-   SECURITY / HTML ESCAPING
-========================= */
-
 function escapeHtml(value) {
 
   return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
-
 
 function escapeAttribute(value) {
 
   return escapeHtml(value);
 
 }
-
-
-/* =========================
-   AUTH STATE
-========================= */
 
 sb.auth.onAuthStateChange(
   (event, session) => {
@@ -1590,10 +1645,5 @@ sb.auth.onAuthStateChange(
 
   }
 );
-
-
-/* =========================
-   START
-========================= */
 
 boot();
