@@ -2192,6 +2192,455 @@ async function loadSiteSettings() {
   }
 
 
+  /* =========================================
+     COMPANY NAME
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="company_name"]'
+    )
+    .forEach(element => {
+
+      element.textContent =
+        data.company_name ||
+        "Handcraft Myanmar Company Limited";
+
+    });
+
+
+  /* =========================================
+     BRAND SUBTITLE
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="brand_subtitle"]'
+    )
+    .forEach(element => {
+
+      element.textContent =
+        data.brand_subtitle ||
+        "MYANMAR";
+
+    });
+
+
+  /* =========================================
+     EMAIL
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="email"]'
+    )
+    .forEach(element => {
+
+      element.textContent =
+        data.email ||
+        "Contact us";
+
+      element.href =
+        data.email
+          ? "mailto:" + data.email
+          : "mailto:";
+
+    });
+
+
+  /* =========================================
+     PHONE 1
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="phone"]'
+    )
+    .forEach(element => {
+
+      const value =
+        data.phone ||
+        "";
+
+      if (value) {
+
+        element.textContent =
+          value;
+
+        element.href =
+          "tel:" +
+          value.replace(/\s+/g, "");
+
+        element.style.display =
+          "";
+
+      } else {
+
+        element.style.display =
+          "none";
+
+      }
+
+    });
+
+
+  /* =========================================
+     PHONE 2
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="phone2"]'
+    )
+    .forEach(element => {
+
+      const value =
+        data.phone2 ||
+        "";
+
+      if (value) {
+
+        element.textContent =
+          value;
+
+        element.href =
+          "tel:" +
+          value.replace(/\s+/g, "");
+
+        element.style.display =
+          "";
+
+      } else {
+
+        element.style.display =
+          "none";
+
+      }
+
+    });
+
+
+  /* =========================================
+     ADDRESS
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="address"]'
+    )
+    .forEach(element => {
+
+      element.textContent =
+        data.address ||
+        "Myanmar";
+
+      element.href =
+        "https://www.google.com/maps?q=16.856993%2C96.1809639&z=17";
+
+      element.target =
+        "_blank";
+
+      element.rel =
+        "noopener";
+
+    });
+
+
+  /* =========================================
+     GOOGLE MAP EMBED
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="map_embed_url"]'
+    )
+    .forEach(element => {
+
+      if (
+        element.tagName ===
+        "IFRAME"
+      ) {
+
+        element.src =
+          data.map_embed_url ||
+          "https://www.google.com/maps?q=16.856993%2C96.1809639&z=17&output=embed";
+
+      }
+
+    });
+
+
+  /* =========================================
+     FACEBOOK
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="facebook_url"]'
+    )
+    .forEach(element => {
+
+      const value =
+        data.facebook_url ||
+        "";
+
+      if (value) {
+
+        element.href =
+          value;
+
+        element.target =
+          "_blank";
+
+        element.rel =
+          "noopener";
+
+        element.style.display =
+          "";
+
+      } else {
+
+        element.style.display =
+          "none";
+
+      }
+
+    });
+
+
+  /* =========================================
+     INSTAGRAM
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="instagram_url"]'
+    )
+    .forEach(element => {
+
+      const value =
+        data.instagram_url ||
+        "";
+
+      if (value) {
+
+        element.href =
+          value;
+
+        element.target =
+          "_blank";
+
+        element.rel =
+          "noopener";
+
+        element.style.display =
+          "";
+
+      } else {
+
+        element.style.display =
+          "none";
+
+      }
+
+    });
+
+
+  /* =========================================
+     YOUTUBE
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="youtube_url"]'
+    )
+    .forEach(element => {
+
+      const value =
+        data.youtube_url ||
+        "";
+
+      if (value) {
+
+        element.href =
+          value;
+
+        element.target =
+          "_blank";
+
+        element.rel =
+          "noopener";
+
+        element.style.display =
+          "";
+
+      } else {
+
+        element.style.display =
+          "none";
+
+      }
+
+    });
+
+
+  /* =========================================
+     PINTEREST
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="pinterest_url"]'
+    )
+    .forEach(element => {
+
+      const value =
+        data.pinterest_url ||
+        "";
+
+      if (value) {
+
+        element.href =
+          value;
+
+        element.target =
+          "_blank";
+
+        element.rel =
+          "noopener";
+
+        element.style.display =
+          "";
+
+      } else {
+
+        element.style.display =
+          "none";
+
+      }
+
+    });
+
+
+  /* =========================================
+     HERO TITLE
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="hero_title"]'
+    )
+    .forEach(element => {
+
+      if (data.hero_title) {
+
+        element.textContent =
+          data.hero_title;
+
+      }
+
+    });
+
+
+  /* =========================================
+     HERO SUBTITLE
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="hero_subtitle"]'
+    )
+    .forEach(element => {
+
+      if (data.hero_subtitle) {
+
+        element.textContent =
+          data.hero_subtitle;
+
+      }
+
+    });
+
+
+  /* =========================================
+     ABOUT TITLE
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="about_title"]'
+    )
+    .forEach(element => {
+
+      if (data.about_title) {
+
+        element.textContent =
+          data.about_title;
+
+      }
+
+    });
+
+
+  /* =========================================
+     ABOUT BODY
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      '[data-setting="about_body"]'
+    )
+    .forEach(element => {
+
+      if (data.about_body) {
+
+        element.textContent =
+          data.about_body;
+
+      }
+
+    });
+
+}
+
+
+/* =========================================================
+   START WEBSITE SETTINGS
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  loadSiteSettings
+);
+
+async function loadSiteSettings() {
+
+  const {
+    data,
+    error
+  } = await sb
+    .from("site_settings")
+    .select("*")
+    .eq("id", 1)
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(
+      "Handcraft settings error:",
+      error
+    );
+
+    return;
+  }
+
+
+  if (!data) {
+    return;
+  }
+
+
   document
     .querySelectorAll(
       "[data-setting]"
