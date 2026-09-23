@@ -1,18 +1,29 @@
 <!doctype html>
 <html lang="en">
+
 <head>
+
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
   <title>Handcraft Myanmar — Admin</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
       background: #f4f5f7;
       color: #1b1b1b;
     }
@@ -51,7 +62,8 @@
       border-radius: 14px;
       padding: 24px;
       margin-bottom: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.04);
+      box-shadow:
+        0 5px 20px rgba(0,0,0,.04);
     }
 
     .panel h2 {
@@ -87,6 +99,15 @@
       font: inherit;
     }
 
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #777;
+      box-shadow:
+        0 0 0 3px rgba(0,0,0,.05);
+    }
+
     textarea {
       min-height: 120px;
       resize: vertical;
@@ -103,7 +124,11 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0,1fr)
+        );
       gap: 15px;
     }
 
@@ -134,6 +159,11 @@
       font-size: 14px;
     }
 
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
     .btn {
       background: #171717;
       color: #fff;
@@ -148,6 +178,10 @@
       color: #222;
     }
 
+    .btn-secondary:hover {
+      background: #dddfe2;
+    }
+
     .btn-danger {
       background: #b42318;
       color: #fff;
@@ -157,6 +191,10 @@
       background: transparent;
       border: 1px solid #d5d5d5;
       color: #222;
+    }
+
+    .btn-ghost:hover {
+      background: #f2f2f2;
     }
 
     .muted {
@@ -170,6 +208,7 @@
       background: #f3f4f6;
       margin-bottom: 15px;
       display: none;
+      white-space: pre-line;
     }
 
     .notice.show {
@@ -224,13 +263,24 @@
 
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(120px,1fr)
+        );
       gap: 10px;
       margin-top: 15px;
     }
 
     .gallery-item {
       position: relative;
+      transition:
+        transform .2s ease,
+        opacity .2s ease;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-2px);
     }
 
     .gallery-item img {
@@ -250,6 +300,15 @@
       font-size: 11px;
       background: #b42318;
       color: white;
+      z-index: 5;
+    }
+
+    .gallery-item[draggable="true"] {
+      cursor: grab;
+    }
+
+    .gallery-item[draggable="true"]:active {
+      cursor: grabbing;
     }
 
     .help {
@@ -257,6 +316,31 @@
       color: #777;
       margin-top: 6px;
       line-height: 1.5;
+    }
+
+    .settings-note {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #f7f7f7;
+      border: 1px solid #e7e7e7;
+      margin-bottom: 18px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #666;
+    }
+
+    .photo-order-note {
+      padding: 14px;
+      border-radius: 10px;
+      background: #f7f7f7;
+      border: 1px solid #e5e5e5;
+      margin-top: 15px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .photo-order-note strong {
+      color: #222;
     }
 
     .top-actions {
@@ -267,6 +351,7 @@
     }
 
     @media (max-width: 700px) {
+
       .grid {
         grid-template-columns: 1fr;
       }
@@ -279,62 +364,121 @@
         align-items: flex-start;
         flex-direction: column;
       }
+
+      .project-card-top {
+        flex-direction: column;
+      }
+
+      .project-card-top .actions {
+        width: 100%;
+      }
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
+
 <div class="admin">
 
+
   <header>
+
     <div>
-      <h1>Handcraft Myanmar</h1>
-      <p>Website Administration</p>
+
+      <h1>
+        Handcraft Myanmar
+      </h1>
+
+      <p>
+        Website Administration
+      </p>
+
     </div>
+
 
     <div class="top-actions">
-      <a href="../" class="btn btn-ghost">View Website</a>
-      <button id="logoutBtn" class="btn-ghost" style="display:none">
+
+      <a
+        href="../"
+        class="btn btn-ghost"
+      >
+        View Website
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="btn-ghost"
+        style="display:none"
+      >
         Log out
       </button>
+
     </div>
+
   </header>
 
-  <!-- LOGIN -->
-  <section id="login" class="panel login-panel">
 
-    <h2>Admin Login</h2>
+  <!-- LOGIN -->
+
+  <section
+    id="login"
+    class="panel login-panel"
+  >
+
+    <h2>
+      Admin Login
+    </h2>
 
     <p class="muted">
-      Sign in with your authorized Supabase admin account.
+      Sign in with your authorized
+      Supabase admin account.
     </p>
 
-    <div id="loginMessage" class="notice"></div>
+    <div
+      id="loginMessage"
+      class="notice"
+    ></div>
+
 
     <form id="loginForm">
 
       <label>
+
         Email
+
         <input
           id="email"
           type="email"
           autocomplete="email"
           required
         >
+
       </label>
 
+
       <label>
+
         Password
+
         <input
           id="password"
           type="password"
           autocomplete="current-password"
           required
         >
+
       </label>
 
-      <button class="btn" type="submit">
+
+      <button
+        class="btn"
+        type="submit"
+      >
         Sign In
       </button>
 
@@ -344,76 +488,192 @@
 
 
   <!-- DASHBOARD -->
-  <main id="dashboard" style="display:none">
+
+  <main
+    id="dashboard"
+    style="display:none"
+  >
+
 
     <!-- WEBSITE SETTINGS -->
+
     <section class="panel">
 
-      <h2>Website Settings</h2>
+      <h2>
+        Website Settings
+      </h2>
 
-      <div id="settingsMessage" class="notice"></div>
+      <div
+        id="settingsMessage"
+        class="notice"
+      ></div>
 
-      <form id="settingsForm" class="grid">
+
+      <div class="settings-note">
+
+        <strong>Contact information</strong><br>
+
+        Phone 1 and Phone 2 will be displayed
+        on the public website. You can leave
+        Phone 2 empty if you only use one
+        business number.
+
+      </div>
+
+
+      <form
+        id="settingsForm"
+        class="grid"
+      >
+
 
         <label>
+
           Company Name
-          <input id="companyName" type="text">
+
+          <input
+            id="companyName"
+            type="text"
+          >
+
         </label>
 
+
         <label>
+
           Email
-          <input id="companyEmail" type="email">
+
+          <input
+            id="companyEmail"
+            type="email"
+          >
+
         </label>
 
-        <label>
-          Phone
-          <input id="companyPhone" type="text">
-        </label>
 
         <label>
-          Address
-          <input id="companyAddress" type="text">
+
+          Phone 1
+
+          <input
+            id="companyPhone"
+            type="text"
+            placeholder="+95 9 xxx xxx xxx"
+          >
+
         </label>
+
+
+        <label>
+
+          Phone 2
+
+          <input
+            id="companyPhone2"
+            type="text"
+            placeholder="+95 9 xxx xxx xxx"
+          >
+
+        </label>
+
 
         <label class="full">
+
+          Address
+
+          <input
+            id="companyAddress"
+            type="text"
+            placeholder="Full company address"
+          >
+
+        </label>
+
+
+        <label class="full">
+
           Google Maps Embed URL
+
           <input
             id="mapEmbedUrl"
             type="url"
-            placeholder="https://www.google.com/maps/embed?..."
+            placeholder="https://www.google.com/maps?q=16.856993%2C96.1809639&z=17&output=embed"
           >
+
           <div class="help">
-            Paste the Google Maps Embed URL here.
+
+            Use the Google Maps embed URL,
+            not the normal Google Maps share URL.
+
+            <br>
+
+            Example:
+
+            https://www.google.com/maps?q=16.856993%2C96.1809639&z=17&output=embed
+
           </div>
+
         </label>
 
+
         <label>
+
           Homepage Headline
-          <input id="heroTitle" type="text">
+
+          <input
+            id="heroTitle"
+            type="text"
+          >
+
         </label>
 
+
         <label>
+
           Homepage Subtitle
-          <input id="heroSubtitle" type="text">
+
+          <input
+            id="heroSubtitle"
+            type="text"
+          >
+
         </label>
 
+
         <label>
+
           About Us Title
-          <input id="aboutTitle" type="text">
+
+          <input
+            id="aboutTitle"
+            type="text"
+          >
+
         </label>
+
 
         <label class="full">
+
           About Us
-          <textarea id="aboutBody"></textarea>
+
+          <textarea
+            id="aboutBody"
+          ></textarea>
+
         </label>
+
 
         <div class="full actions">
 
-          <button class="btn" type="submit">
+          <button
+            class="btn"
+            type="submit"
+          >
             Save Website Settings
           </button>
 
         </div>
+
 
       </form>
 
@@ -421,19 +681,30 @@
 
 
     <!-- PROJECT EDITOR -->
+
     <section class="panel">
 
-      <div class="row" style="justify-content:space-between">
+
+      <div
+        class="row"
+        style="justify-content:space-between"
+      >
 
         <div>
+
           <h2 id="projectEditorTitle">
             Add Project
           </h2>
 
           <p class="muted">
-            Create a project and upload multiple photographs.
+
+            Create a project and upload
+            multiple photographs.
+
           </p>
+
         </div>
+
 
         <button
           id="newProjectBtn"
@@ -445,26 +716,47 @@
 
       </div>
 
-      <div id="projectMessage" class="notice"></div>
 
-      <form id="projectForm" class="grid">
+      <div
+        id="projectMessage"
+        class="notice"
+      ></div>
 
-        <input id="id" type="hidden">
+
+      <form
+        id="projectForm"
+        class="grid"
+      >
+
+
+        <input
+          id="id"
+          type="hidden"
+        >
+
 
         <label>
+
           Project Title
+
           <input
             id="title"
             type="text"
             placeholder="Example: Luxury Residence Renovation"
             required
           >
+
         </label>
 
+
         <label>
+
           Category
 
-          <select id="category" required>
+          <select
+            id="category"
+            required
+          >
 
             <option value="">
               Select category
@@ -487,37 +779,53 @@
             </option>
 
           </select>
+
         </label>
 
+
         <label>
+
           Location
+
           <input
             id="location"
             type="text"
             placeholder="Yangon, Myanmar"
           >
+
         </label>
 
+
         <label>
+
           Display Order
+
           <input
             id="sortOrder"
             type="number"
             value="0"
             min="0"
           >
+
         </label>
 
+
         <label class="full">
+
           Project Description
+
           <textarea
             id="description"
             placeholder="Describe the project, scope of work, materials, design approach, etc."
           ></textarea>
+
         </label>
 
+
         <label class="full">
+
           Project Photos
+
           <input
             id="images"
             type="file"
@@ -525,42 +833,85 @@
             multiple
           >
 
+
           <div class="help">
+
             Select multiple photographs at once.
-            For a completed project, use real project photographs.
-            For 3D concepts, clearly identify them as visualization.
+
+            <br>
+
+            JPG, PNG and WebP are supported.
+            Maximum file size is 8MB per image.
+
+            <br>
+
+            For a completed project,
+            use real project photographs.
+
+            For 3D concepts,
+            clearly identify them as visualization.
+
           </div>
+
         </label>
-<!-- AI PROJECT CONTENT -->
-<div class="full" style="margin-top:5px;margin-bottom:10px">
 
-  <button
-    id="generateAiBtn"
-    type="button"
-    class="btn-secondary"
-  >
-    ✨ Generate Description &amp; Captions with AI
-  </button>
 
-  <div
-    id="aiMessage"
-    class="notice"
-    style="margin-top:10px"
-  ></div>
+        <!-- AI PROJECT CONTENT -->
 
-</div>
+        <div
+          class="full"
+          style="
+            margin-top:5px;
+            margin-bottom:10px
+          "
+        >
+
+          <button
+            id="generateAiBtn"
+            type="button"
+            class="btn-secondary"
+          >
+            ✨ Generate Description &amp;
+            Captions with AI
+          </button>
+
+
+          <div
+            id="aiMessage"
+            class="notice"
+            style="margin-top:10px"
+          ></div>
+
+        </div>
+
+
         <label class="full">
+
           <span>
-            <input id="published" type="checkbox" checked>
-            Publish this project on the website
+
+            <input
+              id="published"
+              type="checkbox"
+              checked
+            >
+
+            Publish this project
+            on the website
+
           </span>
+
         </label>
+
 
         <div class="full actions">
 
-          <button class="btn" type="submit">
+          <button
+            class="btn"
+            type="submit"
+          >
             Save Project
           </button>
+
 
           <button
             id="cancelEditBtn"
@@ -572,36 +923,85 @@
 
         </div>
 
+
       </form>
 
+
       <!-- CURRENT PHOTOS -->
-      <div id="currentGallerySection" style="display:none;margin-top:25px">
 
-        <h3>Current Project Photos</h3>
+      <div
+        id="currentGallerySection"
+        style="
+          display:none;
+          margin-top:25px
+        "
+      >
 
-        <p class="muted">
-          Click Delete to remove an individual photograph.
-        </p>
+        <h3>
+          Current Project Photos
+        </h3>
 
-        <div id="currentGallery" class="gallery"></div>
+
+        <div class="photo-order-note">
+
+          <strong>
+            📸 Photo order
+          </strong>
+
+          <br>
+
+          Drag photographs to change their order.
+
+          <br>
+
+          ⭐ The first photograph is
+          automatically used as the project
+          cover image.
+
+          <br>
+
+          The order is saved automatically
+          after you finish dragging.
+
+        </div>
+
+
+        <div
+          id="currentGallery"
+          class="gallery"
+        ></div>
 
       </div>
+
 
     </section>
 
 
     <!-- PROJECT LIST -->
+
     <section class="panel">
 
-      <div class="row" style="justify-content:space-between">
+
+      <div
+        class="row"
+        style="justify-content:space-between"
+      >
 
         <div>
-          <h2>Projects</h2>
+
+          <h2>
+            Projects
+          </h2>
 
           <p class="muted">
-            Manage your portfolio projects and galleries.
+
+            Manage your portfolio projects
+            and galleries.
+
           </p>
+
         </div>
+
 
         <button
           id="refreshProjectsBtn"
@@ -613,20 +1013,31 @@
 
       </div>
 
+
       <div id="list"></div>
+
 
     </section>
 
+
   </main>
+
 
 </div>
 
 
 <!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
 
 <!-- ADMIN JAVASCRIPT -->
+
 <script src="admin.js"></script>
 
+
 </body>
+
 </html>
