@@ -277,6 +277,13 @@ async function loadSettings() {
   $("instagramUrl").value =
     data?.instagram_url ||
     "";
+     $("youtubeUrl").value =
+    data?.youtube_url ||
+    "";
+
+  $("pinterestUrl").value =
+    data?.pinterest_url ||
+    "";
 
 }
 
@@ -361,6 +368,16 @@ $("settingsForm").addEventListener(
 
       instagram_url:
         $("instagramUrl")
+          .value
+          .trim(),
+      
+       youtube_url:
+        $("youtubeUrl")
+          .value
+          .trim(),
+
+      pinterest_url:
+        $("pinterestUrl")
           .value
           .trim(),
 
