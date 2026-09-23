@@ -10,6 +10,7 @@ const $ = (id) => document.getElementById(id);
 
 let editing = null;
 let currentSettings = null;
+let lastSavedProjectId = null;
 
 
 /* =========================
@@ -18,7 +19,9 @@ let currentSettings = null;
 
 async function boot() {
 
-  const { data: { session } } = await sb.auth.getSession();
+  const {
+    data: { session }
+  } = await sb.auth.getSession();
 
   if (session) {
     showDashboard();
@@ -129,7 +132,8 @@ async function loadSettings() {
   currentSettings = data || {};
 
   $("companyName").value =
-    data?.company_name || "Handcraft Myanmar Company Limited";
+    data?.company_name ||
+    "Handcraft Myanmar Company Limited";
 
   $("companyEmail").value =
     data?.email || "";
@@ -209,12 +213,6 @@ $("settingsForm").addEventListener("submit", async (e) => {
 
   };
 
-
-  /*
-    IMPORTANT:
-    Use UPDATE instead of UPSERT because
-    the site_settings row with id=1 already exists.
-  */
 
   const { error } = await sb
     .from("site_settings")
@@ -415,7 +413,11 @@ function renderProject(project) {
                   >
 
                   <button
-                    onclick="deleteProjectImage('${image.id}', '${project.id}', '${escapeAttribute(image.image_url)}')"
+                    onclick="deleteProjectImage(
+                      '${image.id}',
+                      '${project.id}',
+                      '${escapeAttribute(image.image_url)}'
+                    )"
                   >
                     Delete
                   </button>
@@ -434,6 +436,7 @@ function renderProject(project) {
       }
 
     </div>
+
   `;
 }
 
@@ -464,6 +467,7 @@ $("cancelEditBtn").addEventListener("click", () => {
 function resetProjectForm() {
 
   editing = null;
+  lastSavedProjectId = null;
 
   $("projectForm").reset();
 
@@ -482,6 +486,10 @@ function resetProjectForm() {
   $("currentGallery").innerHTML = "";
 
   $("projectMessage").classList.remove("show");
+
+  if ($("aiMessage")) {
+    $("aiMessage").classList.remove("show");
+  }
 
 }
 
@@ -516,6 +524,7 @@ window.editProject = async function(id) {
 
 
   editing = data;
+  lastSavedProjectId = data.id;
 
 
   $("id").value =
@@ -547,6 +556,11 @@ window.editProject = async function(id) {
   renderCurrentGallery(
     data.project_images || []
   );
+
+
+  if ($("aiMessage")) {
+    $("aiMessage").classList.remove("show");
+  }
 
 
   window.scrollTo({
@@ -586,7 +600,11 @@ function renderCurrentGallery(images) {
           >
 
           <button
-            onclick="deleteProjectImage('${image.id}', '${editing.id}', '${escapeAttribute(image.image_url)}')"
+            onclick="deleteProjectImage(
+              '${image.id}',
+              '${editing.id}',
+              '${escapeAttribute(image.image_url)}'
+            )"
           >
             Delete
           </button>
@@ -730,6 +748,13 @@ $("projectForm").addEventListener("submit", async (e) => {
 
   if (files.length) {
 
+    showMessage(
+      "projectMessage",
+      "Uploading project photographs...",
+      false
+    );
+
+
     const uploadResult =
       await uploadProjectImages(
         projectId,
@@ -753,9 +778,25 @@ $("projectForm").addEventListener("submit", async (e) => {
   }
 
 
+  /*
+    IMPORTANT:
+    Keep the project open after saving.
+    This allows the user to immediately
+    use the AI generation button.
+  */
+
+  lastSavedProjectId = projectId;
+
+  $("id").value = projectId;
+
+  editing = {
+    id: projectId
+  };
+
+
   showMessage(
     "projectMessage",
-    "Project saved successfully.",
+    "Project saved successfully. You can now generate the AI description and photo captions.",
     false
   );
 
@@ -763,9 +804,35 @@ $("projectForm").addEventListener("submit", async (e) => {
   await loadProjects();
 
 
-  setTimeout(() => {
-    resetProjectForm();
-  }, 700);
+  /*
+    Reload the current project's gallery
+    so newly uploaded photos are visible.
+  */
+
+  const { data: refreshedProject } = await sb
+    .from("projects")
+    .select(`
+      *,
+      project_images (
+        id,
+        image_url,
+        alt_text,
+        sort_order
+      )
+    `)
+    .eq("id", projectId)
+    .single();
+
+
+  if (refreshedProject) {
+
+    editing = refreshedProject;
+
+    renderCurrentGallery(
+      refreshedProject.project_images || []
+    );
+
+  }
 
 });
 
@@ -940,6 +1007,245 @@ async function uploadProjectImages(
 
 
 /* =========================
+   GENERATE PROJECT CONTENT
+   WITH AI
+========================= */
+
+$("generateAiBtn").addEventListener(
+  "click",
+  async () => {
+
+    /*
+      Determine which project the AI
+      should work on.
+    */
+
+    const projectId =
+      $("id").value ||
+      editing?.id ||
+      lastSavedProjectId;
+
+
+    if (!projectId) {
+
+      showMessage(
+        "aiMessage",
+        "Please save the project and upload its photographs first.",
+        true
+      );
+
+      return;
+    }
+
+
+    const button =
+      $("generateAiBtn");
+
+
+    button.disabled = true;
+
+    button.textContent =
+      "✨ AI is analyzing your project photos...";
+
+
+    showMessage(
+      "aiMessage",
+      "AI is analyzing the photographs and writing professional project content. Please wait...",
+      false
+    );
+
+
+    try {
+
+      /*
+        Make sure the user still has
+        an authenticated Supabase session.
+      */
+
+      const {
+        data: { session }
+      } = await sb.auth.getSession();
+
+
+      if (!session) {
+
+        throw new Error(
+          "Your admin session has expired. Please log in again."
+        );
+
+      }
+
+
+      /*
+        Call the Supabase Edge Function.
+      */
+
+      const { data, error } =
+        await sb.functions.invoke(
+          "generate-project-content",
+          {
+            body: {
+              projectId: projectId
+            }
+          }
+        );
+
+
+      if (error) {
+
+        console.error(
+          "AI function error:",
+          error
+        );
+
+        throw new Error(
+          error.message ||
+          "AI generation failed."
+        );
+
+      }
+
+
+      if (!data) {
+
+        throw new Error(
+          "The AI function returned no data."
+        );
+
+      }
+
+
+      /*
+        Put the generated description
+        directly into the project editor.
+      */
+
+      if (data.description) {
+
+        $("description").value =
+          data.description;
+
+      }
+
+
+      /*
+        Refresh the project from Supabase
+        so generated photo captions appear
+        in the current gallery.
+      */
+
+      const {
+        data: refreshedProject
+      } = await sb
+        .from("projects")
+        .select(`
+          *,
+          project_images (
+            id,
+            image_url,
+            alt_text,
+            sort_order
+          )
+        `)
+        .eq("id", projectId)
+        .single();
+
+
+      if (refreshedProject) {
+
+        editing =
+          refreshedProject;
+
+        lastSavedProjectId =
+          refreshedProject.id;
+
+        $("id").value =
+          refreshedProject.id;
+
+        renderCurrentGallery(
+          refreshedProject.project_images || []
+        );
+
+      }
+
+
+      /*
+        Build success message.
+      */
+
+      let message =
+        "✨ AI content generated successfully!";
+
+
+      if (data.description) {
+
+        message +=
+          "\n\nProfessional project description generated.";
+
+      }
+
+
+      if (data.short_description) {
+
+        message +=
+          "\nShort description generated.";
+
+      }
+
+
+      if (
+        data.captions &&
+        data.captions.length
+      ) {
+
+        message +=
+          `\n${data.captions.length} photo caption(s) generated.`;
+
+      }
+
+
+      showMessage(
+        "aiMessage",
+        message,
+        false
+      );
+
+
+      /*
+        Refresh project list.
+      */
+
+      await loadProjects();
+
+
+    } catch (error) {
+
+      console.error(
+        "AI generation failed:",
+        error
+      );
+
+
+      showMessage(
+        "aiMessage",
+        "AI error: " +
+        error.message,
+        true
+      );
+
+    }
+
+
+    button.disabled = false;
+
+    button.textContent =
+      "✨ Generate Description & Captions with AI";
+
+  }
+);
+
+
+/* =========================
    DELETE PROJECT IMAGE
 ========================= */
 
@@ -1055,7 +1361,13 @@ window.deleteProjectImage = async function(
   }
 
 
-  if (editing && editing.id === projectId) {
+  if (
+    editing &&
+    editing.id === projectId
+  ) {
+
+    editing.project_images =
+      remaining || [];
 
     renderCurrentGallery(
       remaining || []
@@ -1169,6 +1481,15 @@ window.deleteProject = async function(id) {
   }
 
 
+  if (
+    lastSavedProjectId === id
+  ) {
+
+    lastSavedProjectId = null;
+
+  }
+
+
   await loadProjects();
 
 };
@@ -1196,19 +1517,31 @@ function showMessage(
 
   const el = $(id);
 
-  el.textContent = message;
+  if (!el) {
+    return;
+  }
+
+  el.textContent =
+    message;
 
   el.classList.add("show");
 
+
   if (error) {
 
-    el.style.background = "#fbeaea";
-    el.style.color = "#9b2226";
+    el.style.background =
+      "#fbeaea";
+
+    el.style.color =
+      "#9b2226";
 
   } else {
 
-    el.style.background = "#edf7ef";
-    el.style.color = "#176b35";
+    el.style.background =
+      "#edf7ef";
+
+    el.style.color =
+      "#176b35";
 
   }
 
