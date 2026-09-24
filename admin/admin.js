@@ -7,548 +7,400 @@ const SUPABASE_PUBLISHABLE_KEY =
 const ADMIN_USER_ID =
   "a64b8ffc-bac7-473e-a4be-846f16b94f81";
 
-const sb =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
-
-
-const $ = id =>
-  document.getElementById(id);
-
-
-let categories = [];
-
-let projects = [];
-
-let insights = [];
-
-let currentProject = null;
-
-let currentInsight = null;
-
-let currentProjectPhotos = [];
-
-
-document.addEventListener(
-  "DOMContentLoaded",
-  boot
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
 );
 
+const $ = id => document.getElementById(id);
 
+let categories = [];
+let projects = [];
+let insights = [];
+let currentProject = null;
+let currentInsight = null;
+let currentProjectPhotos = [];
+
+document.addEventListener("DOMContentLoaded", boot);
+
+
+/* =========================================================
+   BOOT / LOGIN
+========================================================= */
 
 async function boot() {
-
-  const {
-    data: {
-      session
-    }
-  } =
-    await sb.auth.getSession();
-
-
-  if (session) {
-
-    showDashboard();
-
-  } else {
-
-    showLogin();
-
-  }
-
-}
-
-
-
-function showLogin() {
-
-  $("login").style.display =
-    "block";
-
-  $("dashboard").style.display =
-    "none";
-
-}
-
-
-
-async function showDashboard() {
-
-  $("login").style.display =
-    "none";
-
-  $("dashboard").style.display =
-    "block";
-
-
-  await loadSettings();
-
-  await loadCategories();
-
-  await loadProjects();
-
-  await loadInsights();
-
-}
-
-
-
-function message(
-  id,
-  text,
-  error = false
-) {
-
-  const el =
-    $(id);
-
-  if (!el) {
-    return;
-  }
-
-
-  el.textContent =
-    text;
-
-
-  el.className =
-    "message show " +
-    (error
-      ? "error"
-      : "success");
-
-}
-
-
-
-function clearMessage(id) {
-
-  const el =
-    $(id);
-
-  if (el) {
-
-    el.textContent =
-      "";
-
-    el.className =
-      "message";
-
-  }
-
-}
-
-
-
-/* LOGIN */
-
-$("loginForm").addEventListener(
-  "submit",
-  async event => {
-
-    event.preventDefault();
-
-
-    message(
-      "loginMessage",
-      "Signing in..."
-    );
-
-
-    const {
-      error
-    } =
-      await sb.auth.signInWithPassword({
-
-        email:
-          $("email")
-            .value
-            .trim(),
-
-        password:
-          $("password")
-            .value
-
-      });
-
+  try {
+    const { data, error } = await sb.auth.getSession();
 
     if (error) {
+      showLogin();
+      return;
+    }
 
+    if (data.session) {
+      await showDashboard();
+    } else {
+      showLogin();
+    }
+  } catch (error) {
+    console.error(error);
+    showLogin();
+  }
+}
+
+function showLogin() {
+  if ($("login")) $("login").style.display = "block";
+  if ($("dashboard")) $("dashboard").style.display = "none";
+}
+
+async function showDashboard() {
+  if ($("login")) $("login").style.display = "none";
+  if ($("dashboard")) $("dashboard").style.display = "block";
+
+  await loadSettings();
+  await loadCategories();
+  await loadProjects();
+  await loadInsights();
+}
+
+function message(id, text, error = false) {
+  const el = $(id);
+  if (!el) return;
+
+  el.textContent = text;
+  el.className =
+    "message show " + (error ? "error" : "success");
+}
+
+function clearMessage(id) {
+  const el = $(id);
+  if (!el) return;
+
+  el.textContent = "";
+  el.className = "message";
+}
+
+function value(id, fallback = "") {
+  const el = $(id);
+  return el ? el.value.trim() : fallback;
+}
+
+function isChecked(id, fallback = false) {
+  const el = $(id);
+  return el ? el.checked : fallback;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+if ($("loginForm")) {
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    message("loginMessage", "Signing in...");
+
+    const { error } =
+      await sb.auth.signInWithPassword({
+        email: value("email"),
+        password: $("password")
+          ? $("password").value
+          : ""
+      });
+
+    if (error) {
       message(
         "loginMessage",
         error.message,
         true
       );
-
       return;
-
     }
 
-
     await showDashboard();
-
-  }
-);
-
+  });
+}
 
 
-/* LOGOUT */
+/* =========================================================
+   LOGOUT
+========================================================= */
 
-$("logoutBtn").addEventListener(
-  "click",
-  async () => {
-
-    await sb.auth.signOut();
-
-    location.reload();
-
-  }
-);
-
+if ($("logoutBtn")) {
+  $("logoutBtn").addEventListener(
+    "click",
+    async () => {
+      await sb.auth.signOut();
+      location.reload();
+    }
+  );
+}
 
 
-/* SETTINGS */
+/* =========================================================
+   WEBSITE SETTINGS
+========================================================= */
 
 async function loadSettings() {
-
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await sb
       .from("site_settings")
       .select("*")
       .eq("id", 1)
       .maybeSingle();
 
-
   if (error) {
-
     message(
       "settingsMessage",
       error.message,
       true
     );
-
     return;
-
   }
 
+  if (!data) return;
 
-  $("companyName").value =
-    data?.company_name || "";
+  if ($("companyName"))
+    $("companyName").value =
+      data.company_name || "";
 
-  $("brandSubtitle").value =
-    data?.brand_subtitle || "MYANMAR";
+  if ($("brandSubtitle"))
+    $("brandSubtitle").value =
+      data.brand_subtitle || "MYANMAR";
 
-  $("companyEmail").value =
-    data?.email || "";
+  if ($("companyEmail"))
+    $("companyEmail").value =
+      data.email || "";
 
-  $("companyPhone").value =
-    data?.phone || "";
+  if ($("companyPhone"))
+    $("companyPhone").value =
+      data.phone || "";
 
-  $("companyPhone2").value =
-    data?.phone2 || "";
+  if ($("companyPhone2"))
+    $("companyPhone2").value =
+      data.phone2 || "";
 
-  $("companyAddress").value =
-    data?.address || "";
+  if ($("companyAddress"))
+    $("companyAddress").value =
+      data.address || "";
 
-  $("mapEmbedUrl").value =
-    data?.map_embed_url ||
-    "https://www.google.com/maps?q=16.856993%2C96.1809639&z=17&output=embed";
+  if ($("mapEmbedUrl"))
+    $("mapEmbedUrl").value =
+      data.map_embed_url ||
+      "https://www.google.com/maps?q=16.856993%2C96.1809639&z=17&output=embed";
 
-  $("heroTitle").value =
-    data?.hero_title ||
-    "From Vision to Reality";
+  if ($("heroTitle"))
+    $("heroTitle").value =
+      data.hero_title ||
+      "From Vision to Reality";
 
-  $("heroSubtitle").value =
-    data?.hero_subtitle || "";
+  if ($("heroSubtitle"))
+    $("heroSubtitle").value =
+      data.hero_subtitle || "";
 
-  $("aboutTitle").value =
-    data?.about_title || "";
+  if ($("aboutTitle"))
+    $("aboutTitle").value =
+      data.about_title || "";
 
-  $("aboutBody").value =
-    data?.about_body || "";
+  if ($("aboutBody"))
+    $("aboutBody").value =
+      data.about_body || "";
 
-  $("facebookUrl").value =
-    data?.facebook_url || "";
+  if ($("facebookUrl"))
+    $("facebookUrl").value =
+      data.facebook_url || "";
 
-  $("instagramUrl").value =
-    data?.instagram_url || "";
+  if ($("instagramUrl"))
+    $("instagramUrl").value =
+      data.instagram_url || "";
 
-  $("youtubeUrl").value =
-    data?.youtube_url || "";
+  if ($("youtubeUrl"))
+    $("youtubeUrl").value =
+      data.youtube_url || "";
 
-  $("pinterestUrl").value =
-    data?.pinterest_url || "";
+  if ($("pinterestUrl"))
+    $("pinterestUrl").value =
+      data.pinterest_url || "";
 
+  if ($("tiktokUrl"))
+    $("tiktokUrl").value =
+      data.tiktok_url || "";
 }
 
-
-
-$("settingsForm").addEventListener(
-  "submit",
-  async event => {
-
-    event.preventDefault();
-
-
-    message(
-      "settingsMessage",
-      "Saving website settings..."
-    );
-
-
-    const payload = {
-
-      id: 1,
-
-      company_name:
-        $("companyName")
-          .value
-          .trim(),
-
-      brand_subtitle:
-        $("brandSubtitle")
-          .value
-          .trim(),
-
-      email:
-        $("companyEmail")
-          .value
-          .trim(),
-
-      phone:
-        $("companyPhone")
-          .value
-          .trim(),
-
-      phone2:
-        $("companyPhone2")
-          .value
-          .trim(),
-
-      address:
-        $("companyAddress")
-          .value
-          .trim(),
-
-      map_embed_url:
-        $("mapEmbedUrl")
-          .value
-          .trim(),
-
-      hero_title:
-        $("heroTitle")
-          .value
-          .trim(),
-
-      hero_subtitle:
-        $("heroSubtitle")
-          .value
-          .trim(),
-
-      about_title:
-        $("aboutTitle")
-          .value
-          .trim(),
-
-      about_body:
-        $("aboutBody")
-          .value
-          .trim(),
-
-      facebook_url:
-        $("facebookUrl")
-          .value
-          .trim(),
-
-      instagram_url:
-        $("instagramUrl")
-          .value
-          .trim(),
-
-      youtube_url:
-        $("youtubeUrl")
-          .value
-          .trim(),
-
-      pinterest_url:
-        $("pinterestUrl")
-          .value
-          .trim(),
-
-      updated_at:
-        new Date()
-          .toISOString()
-
-    };
-
-
-    const {
-      error
-    } =
-      await sb
-        .from("site_settings")
-        .update(payload)
-        .eq("id", 1);
-
-
-    if (error) {
+if ($("settingsForm")) {
+  $("settingsForm").addEventListener(
+    "submit",
+    async event => {
+      event.preventDefault();
 
       message(
         "settingsMessage",
-        error.message,
-        true
+        "Saving website settings..."
       );
 
-      return;
+      const payload = {
+        id: 1,
 
+        company_name:
+          value("companyName"),
+
+        brand_subtitle:
+          value("brandSubtitle"),
+
+        email:
+          value("companyEmail"),
+
+        phone:
+          value("companyPhone"),
+
+        phone2:
+          value("companyPhone2"),
+
+        address:
+          value("companyAddress"),
+
+        map_embed_url:
+          value("mapEmbedUrl"),
+
+        hero_title:
+          value("heroTitle"),
+
+        hero_subtitle:
+          value("heroSubtitle"),
+
+        about_title:
+          value("aboutTitle"),
+
+        about_body:
+          value("aboutBody"),
+
+        facebook_url:
+          value("facebookUrl"),
+
+        instagram_url:
+          value("instagramUrl"),
+
+        youtube_url:
+          value("youtubeUrl"),
+
+        pinterest_url:
+          value("pinterestUrl")
+      };
+
+      if ($("tiktokUrl")) {
+        payload.tiktok_url =
+          value("tiktokUrl");
+      }
+
+      const { error } =
+        await sb
+          .from("site_settings")
+          .update(payload)
+          .eq("id", 1);
+
+      if (error) {
+        message(
+          "settingsMessage",
+          error.message,
+          true
+        );
+        return;
+      }
+
+      message(
+        "settingsMessage",
+        "Website settings saved successfully."
+      );
     }
+  );
+}
 
 
-    message(
-      "settingsMessage",
-      "Website settings saved successfully."
-    );
-
-  }
-);
-
-
-
-/* CATEGORIES */
+/* =========================================================
+   CATEGORIES
+========================================================= */
 
 async function loadCategories() {
-
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await sb
       .from("project_categories")
       .select("*")
       .order(
         "sort_order",
-        {
-          ascending: true
-        }
+        { ascending: true }
       );
 
-
   if (error) {
-
     message(
       "categoryMessage",
       error.message,
       true
     );
-
     return;
-
   }
 
-
-  categories =
-    data || [];
-
+  categories = data || [];
 
   renderCategorySelects();
-
   renderCategoryList();
-
 }
 
-
-
 function renderCategorySelects() {
-
   const projectSelect =
     $("category");
 
   const insightSelect =
     $("insightCategory");
 
-
   const options =
     categories
-      .filter(
-        item =>
-          item.active
-      )
+      .filter(item => item.active)
       .map(
         item => `
-
           <option value="${escapeHtml(
             item.name
           )}">
-
-            ${escapeHtml(
-              item.name
-            )}
-
+            ${escapeHtml(item.name)}
           </option>
-
         `
       )
       .join("");
 
-
   if (projectSelect) {
-
     const old =
       projectSelect.value;
 
-
     projectSelect.innerHTML =
-      `<option value="">
-        Select category
-      </option>` +
+      `<option value="">Select category</option>` +
       options;
 
-
-    projectSelect.value =
-      old;
-
+    projectSelect.value = old;
   }
 
-
   if (insightSelect) {
-
     const old =
       insightSelect.value;
 
-
     insightSelect.innerHTML =
-      `<option value="">
-        Select category
-      </option>` +
+      `<option value="">Select category</option>` +
       options;
 
-
-    insightSelect.value =
-      old;
-
+    insightSelect.value = old;
   }
-
 }
 
-
-
 function renderCategoryList() {
-
   const list =
     $("categoryList");
 
+  if (!list) return;
 
   list.innerHTML =
     categories.length
       ? categories
           .map(
             category => `
-
               <div class="list-item">
 
                 <div>
@@ -565,12 +417,12 @@ function renderCategoryList() {
                         ? "Visible"
                         : "Hidden"
                     }
+
                     · Order:
                     ${category.sort_order}
                   </small>
 
                 </div>
-
 
                 <div class="list-actions">
 
@@ -604,123 +456,98 @@ function renderCategoryList() {
                 </div>
 
               </div>
-
             `
           )
           .join("")
       : `<p class="muted">
           No categories yet.
         </p>`;
-
 }
 
+if ($("categoryForm")) {
+  $("categoryForm").addEventListener(
+    "submit",
+    async event => {
+      event.preventDefault();
 
+      const id =
+        value("categoryId");
 
-$("categoryForm").addEventListener(
-  "submit",
-  async event => {
+      const name =
+        value("categoryName");
 
-    event.preventDefault();
+      if (!name) {
+        message(
+          "categoryMessage",
+          "Please enter a category name.",
+          true
+        );
+        return;
+      }
 
+      const payload = {
+        name,
 
-    const id =
-      $("categoryId")
-        .value
-        .trim();
+        slug:
+          slugify(name),
 
+        sort_order:
+          Number(
+            value("categorySortOrder")
+          ) || 0,
 
-    const name =
-      $("categoryName")
-        .value
-        .trim();
+        active:
+          isChecked(
+            "categoryActive",
+            true
+          )
+      };
 
+      let result;
 
-    const slug =
-      slugify(name);
+      if (id) {
+        result =
+          await sb
+            .from("project_categories")
+            .update(payload)
+            .eq("id", id);
+      } else {
+        result =
+          await sb
+            .from("project_categories")
+            .insert(payload);
+      }
 
-
-    const payload = {
-
-      name,
-
-      slug,
-
-      sort_order:
-        Number(
-          $("categorySortOrder")
-            .value
-        ) || 0,
-
-      active:
-        $("categoryActive")
-          .checked
-
-    };
-
-
-    let result;
-
-
-    if (id) {
-
-      result =
-        await sb
-          .from("project_categories")
-          .update(payload)
-          .eq("id", id);
-
-    } else {
-
-      result =
-        await sb
-          .from("project_categories")
-          .insert(payload);
-
-    }
-
-
-    if (result.error) {
+      if (result.error) {
+        message(
+          "categoryMessage",
+          result.error.message,
+          true
+        );
+        return;
+      }
 
       message(
         "categoryMessage",
-        result.error.message,
-        true
+        "Category saved."
       );
 
-      return;
+      resetCategoryForm();
 
+      await loadCategories();
     }
-
-
-    message(
-      "categoryMessage",
-      "Category saved."
-    );
-
-
-    resetCategoryForm();
-
-    await loadCategories();
-
-  }
-);
-
-
+  );
+}
 
 window.editCategory =
   function(id) {
-
     const item =
       categories.find(
         category =>
           category.id === id
       );
 
-
-    if (!item) {
-      return;
-    }
-
+    if (!item) return;
 
     $("categoryId").value =
       item.id;
@@ -729,61 +556,38 @@ window.editCategory =
       item.name;
 
     $("categorySortOrder").value =
-      item.sort_order;
+      item.sort_order || 0;
 
     $("categoryActive").checked =
       item.active;
 
-    window.scrollTo({
-      top:
-        $("categoryForm")
-          .getBoundingClientRect()
-          .top +
-        window.scrollY -
-        100,
-      behavior: "smooth"
-    });
-
+    scrollToElement(
+      "categoryForm"
+    );
   };
-
-
 
 window.toggleCategory =
   async function(id, active) {
-
-    const {
-      error
-    } =
+    const { error } =
       await sb
         .from("project_categories")
-        .update({
-          active
-        })
+        .update({ active })
         .eq("id", id);
 
-
     if (error) {
-
       message(
         "categoryMessage",
         error.message,
         true
       );
-
       return;
-
     }
 
-
     await loadCategories();
-
   };
-
-
 
 window.deleteCategory =
   async function(id) {
-
     if (
       !confirm(
         "Delete this category?"
@@ -792,66 +596,49 @@ window.deleteCategory =
       return;
     }
 
-
-    const {
-      error
-    } =
+    const { error } =
       await sb
         .from("project_categories")
         .delete()
         .eq("id", id);
 
-
     if (error) {
-
       message(
         "categoryMessage",
         error.message,
         true
       );
-
       return;
-
     }
 
-
     await loadCategories();
-
   };
 
-
-
-$("cancelCategoryBtn")
-  .addEventListener(
+if ($("cancelCategoryBtn")) {
+  $("cancelCategoryBtn").addEventListener(
     "click",
     resetCategoryForm
   );
-
-
+}
 
 function resetCategoryForm() {
+  if ($("categoryForm"))
+    $("categoryForm").reset();
 
-  $("categoryForm")
-    .reset();
+  if ($("categoryId"))
+    $("categoryId").value = "";
 
-  $("categoryId").value =
-    "";
-
-  $("categoryActive").checked =
-    true;
-
+  if ($("categoryActive"))
+    $("categoryActive").checked = true;
 }
 
 
-
-/* PROJECTS */
+/* =========================================================
+   PROJECTS
+========================================================= */
 
 async function loadProjects() {
-
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await sb
       .from("projects")
       .select(`
@@ -865,53 +652,38 @@ async function loadProjects() {
       `)
       .order(
         "sort_order",
-        {
-          ascending: true
-        }
+        { ascending: true }
       )
       .order(
         "created_at",
-        {
-          ascending: false
-        }
+        { ascending: false }
       );
 
-
   if (error) {
-
     message(
       "projectMessage",
       error.message,
       true
     );
-
     return;
-
   }
 
-
-  projects =
-    data || [];
-
+  projects = data || [];
 
   renderProjectList();
-
 }
 
-
-
 function renderProjectList() {
-
   const list =
     $("projectList");
 
+  if (!list) return;
 
   list.innerHTML =
     projects.length
       ? projects
           .map(
             project => `
-
               <div class="list-item">
 
                 <div>
@@ -923,10 +695,11 @@ function renderProjectList() {
                   </strong>
 
                   <small>
+
                     ${escapeHtml(
-                      project.category ||
-                      ""
+                      project.category || ""
                     )}
+
                     ${
                       project.location
                         ? " · " +
@@ -935,21 +708,24 @@ function renderProjectList() {
                           )
                         : ""
                     }
+
                     ·
+
                     ${
                       project.published
                         ? "Published"
                         : "Hidden"
                     }
+
                     ${
                       project.hero_enabled
                         ? " · Hero"
                         : ""
                     }
+
                   </small>
 
                 </div>
-
 
                 <div class="list-actions">
 
@@ -979,297 +755,467 @@ function renderProjectList() {
                 </div>
 
               </div>
-
             `
           )
           .join("")
       : `<p class="muted">
           No projects yet.
         </p>`;
-
 }
 
 
+/* =========================================================
+   PROJECT SAVE — FIXED
+========================================================= */
 
-$("projectForm").addEventListener(
-  "submit",
-  saveProject
-);
+if ($("projectForm")) {
+  $("projectForm").addEventListener(
+    "submit",
+    saveProject
+  );
+}
 
-
-
-async function saveProject(
-  event
-) {
-
+async function saveProject(event) {
   event.preventDefault();
 
+  clearMessage(
+    "projectMessage"
+  );
 
-  const id =
-    $("projectId")
-      .value
-      .trim();
+  const existingId =
+    value("projectId");
 
+  const title =
+    value("projectTitle");
 
-  const payload = {
+  const category =
+    value("category");
 
-    title:
-      $("projectTitle")
-        .value
-        .trim(),
+  const location =
+    value("projectLocation");
 
-    category:
-      $("category")
-        .value
-        .trim(),
+  const description =
+    value("projectDescription");
 
-    location:
-      $("projectLocation")
-        .value
-        .trim(),
-
-    description:
-      $("projectDescription")
-        .value
-        .trim(),
-
-    published:
-      $("projectPublished")
-        .checked,
-
-    sort_order:
-      Number(
-        $("projectSortOrder")
-          .value
-      ) || 0,
-
-    hero_enabled:
-      $("heroEnabled")
-        .checked,
-
-    hero_order:
-      Number(
-        $("heroOrder")
-          .value
-      ) || 0,
-
-    updated_at:
-      new Date()
-        .toISOString()
-
-  };
-
-
-  if (!payload.title) {
-
+  if (!title) {
     message(
       "projectMessage",
       "Please enter a project title.",
       true
     );
-
     return;
-
   }
 
-
-  let project;
-
-
-  if (id) {
-
-    const result =
-      await sb
-        .from("projects")
-        .update(payload)
-        .eq("id", id)
-        .select()
-        .single();
-
-
-    if (result.error) {
-
-      message(
-        "projectMessage",
-        result.error.message,
-        true
-      );
-
-      return;
-
-    }
-
-
-    project =
-      result.data;
-
-  } else {
-
-    const result =
-      await sb
-        .from("projects")
-        .insert(payload)
-        .select()
-        .single();
-
-
-    if (result.error) {
-
-      message(
-        "projectMessage",
-        result.error.message,
-        true
-      );
-
-      return;
-
-    }
-
-
-    project =
-      result.data;
-
+  if (!category) {
+    message(
+      "projectMessage",
+      "Please select a project category.",
+      true
+    );
+    return;
   }
 
+  /*
+    KEY FIX:
 
-  const files =
-    $("projectImages")
-      .files;
+    If this is a NEW project, create the UUID
+    BEFORE inserting the project.
 
+    The old version waited for Supabase to create
+    the ID, while another part of the system expected
+    projectId to already exist.
+  */
 
-  if (files.length) {
-
-    await uploadProjectImages(
-      project.id,
-      files
+  const projectId =
+    existingId ||
+    (
+      window.crypto &&
+      crypto.randomUUID
+        ? crypto.randomUUID()
+        : fallbackUuid()
     );
 
+  $("projectId").value =
+    projectId;
+
+  const payload = {
+    id: projectId,
+
+    title,
+
+    category,
+
+    location,
+
+    description,
+
+    published:
+      isChecked(
+        "projectPublished",
+        true
+      ),
+
+    sort_order:
+      Number(
+        value("projectSortOrder")
+      ) || 0,
+
+    hero_enabled:
+      isChecked(
+        "heroEnabled",
+        false
+      ),
+
+    hero_order:
+      Number(
+        value("heroOrder")
+      ) || 0
+  };
+
+  try {
+    message(
+      "projectMessage",
+      existingId
+        ? "Saving project changes..."
+        : "Creating project..."
+    );
+
+    let result;
+
+    if (existingId) {
+
+      result =
+        await sb
+          .from("projects")
+          .update(payload)
+          .eq("id", projectId)
+          .select()
+          .single();
+
+    } else {
+
+      result =
+        await sb
+          .from("projects")
+          .insert(payload)
+          .select()
+          .single();
+
+    }
+
+    if (result.error) {
+      console.error(
+        "Project save error:",
+        result.error
+      );
+
+      message(
+        "projectMessage",
+        result.error.message ||
+          "Project could not be saved.",
+        true
+      );
+
+      return;
+    }
+
+    const project =
+      result.data;
+
+    if (
+      !project ||
+      !project.id
+    ) {
+      message(
+        "projectMessage",
+        "Project was saved but no project ID was returned.",
+        true
+      );
+      return;
+    }
+
+    /*
+      Keep the generated ID in the hidden field.
+      This is what allows AI generation immediately
+      after saving.
+    */
+
+    $("projectId").value =
+      project.id;
+
+    const files =
+      $("projectImages") &&
+      $("projectImages").files
+        ? Array.from(
+            $("projectImages").files
+          )
+        : [];
+
+    if (files.length) {
+
+      const uploadResult =
+        await uploadProjectImages(
+          project.id,
+          files
+        );
+
+      if (
+        !uploadResult.success
+      ) {
+
+        await loadProjects();
+
+        editProject(
+          project.id
+        );
+
+        message(
+          "projectMessage",
+          "Project saved, but photo upload failed: " +
+            uploadResult.error,
+          true
+        );
+
+        return;
+      }
+    }
+
+    await loadProjects();
+
+    editProject(
+      project.id
+    );
+
+    message(
+      "projectMessage",
+      existingId
+        ? "Project updated successfully."
+        : "Project created successfully. You can now generate AI content."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Unexpected project save error:",
+      error
+    );
+
+    message(
+      "projectMessage",
+      error.message ||
+        "Unexpected error while saving the project.",
+      true
+    );
   }
-
-
-  message(
-    "projectMessage",
-    "Project saved successfully."
-  );
-
-
-  await loadProjects();
-
-  editProject(
-    project.id
-  );
-
 }
 
 
+/* =========================================================
+   PROJECT PHOTO UPLOAD
+========================================================= */
 
 async function uploadProjectImages(
   projectId,
   files
 ) {
-
-  for (
-    let i = 0;
-    i < files.length;
-    i++
-  ) {
-
-    const file =
-      files[i];
-
-
-    const extension =
-      file.name
-        .split(".")
-        .pop()
-        .toLowerCase();
-
-
-    const path =
-      `${projectId}/${Date.now()}-${i}.${extension}`;
-
-
-    const upload =
-      await sb.storage
-        .from("project-images")
-        .upload(
-          path,
-          file,
-          {
-            upsert: false
-          }
-        );
-
-
-    if (upload.error) {
-
-      console.error(
-        upload.error
-      );
-
-      continue;
-
-    }
-
-
-    const {
-      data: publicData
-    } =
-      sb.storage
-        .from("project-images")
-        .getPublicUrl(path);
-
-
-    const {
-      data: existing
-    } =
-      await sb
-        .from("project_images")
-        .select("sort_order")
-        .eq(
-          "project_id",
-          projectId
-        )
-        .order(
-          "sort_order",
-          {
-            ascending: false
-          }
-        )
-        .limit(1);
-
-
-    const nextOrder =
-      existing?.length
-        ? Number(
-            existing[0].sort_order
-          ) + 1
-        : 0;
-
-
-    await sb
-      .from("project_images")
-      .insert({
-
-        project_id:
-          projectId,
-
-        image_url:
-          publicData.publicUrl,
-
-        alt_text:
-          "",
-
-        sort_order:
-          nextOrder
-
-      });
-
+  if (!projectId) {
+    return {
+      success: false,
+      error: "Project ID is missing."
+    };
   }
 
+  try {
+
+    for (
+      let i = 0;
+      i < files.length;
+      i++
+    ) {
+
+      const file =
+        files[i];
+
+      if (
+        !file ||
+        !file.name
+      ) {
+        continue;
+      }
+
+      const extension =
+        file.name.includes(".")
+          ? file.name
+              .split(".")
+              .pop()
+              .toLowerCase()
+          : "jpg";
+
+      const safeExtension =
+        extension.replace(
+          /[^a-z0-9]/gi,
+          ""
+        ) || "jpg";
+
+      const uniquePart =
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2, 10);
+
+      const path =
+        `${projectId}/${uniquePart}-${i}.${safeExtension}`;
+
+      const upload =
+        await sb.storage
+          .from("project-images")
+          .upload(
+            path,
+            file,
+            {
+              upsert: false
+            }
+          );
+
+      if (upload.error) {
+
+        console.error(
+          "Storage upload error:",
+          upload.error
+        );
+
+        return {
+          success: false,
+          error:
+            upload.error.message ||
+            "Storage upload failed."
+        };
+      }
+
+      const {
+        data: publicData
+      } =
+        sb.storage
+          .from("project-images")
+          .getPublicUrl(
+            path
+          );
+
+      if (
+        !publicData ||
+        !publicData.publicUrl
+      ) {
+        return {
+          success: false,
+          error:
+            "Could not create the public image URL."
+        };
+      }
+
+      const {
+        data: existing,
+        error: existingError
+      } =
+        await sb
+          .from("project_images")
+          .select(
+            "sort_order"
+          )
+          .eq(
+            "project_id",
+            projectId
+          )
+          .order(
+            "sort_order",
+            {
+              ascending: false
+            }
+          )
+          .limit(1);
+
+      if (existingError) {
+
+        console.error(
+          "Photo order lookup error:",
+          existingError
+        );
+
+        return {
+          success: false,
+          error:
+            existingError.message
+        };
+      }
+
+      const nextOrder =
+        existing &&
+        existing.length
+          ? Number(
+              existing[0]
+                .sort_order || 0
+            ) + 1
+          : 0;
+
+      const {
+        error:
+          imageInsertError
+      } =
+        await sb
+          .from("project_images")
+          .insert({
+            project_id:
+              projectId,
+
+            image_url:
+              publicData.publicUrl,
+
+            alt_text:
+              "",
+
+            sort_order:
+              nextOrder
+          });
+
+      if (imageInsertError) {
+
+        console.error(
+          "Project image database error:",
+          imageInsertError
+        );
+
+        return {
+          success: false,
+          error:
+            imageInsertError.message
+        };
+      }
+    }
+
+    return {
+      success: true
+    };
+
+  } catch (error) {
+
+    console.error(
+      "Photo upload exception:",
+      error
+    );
+
+    return {
+      success: false,
+      error:
+        error.message ||
+        "Photo upload failed."
+    };
+  }
 }
 
 
+/* =========================================================
+   EDIT PROJECT
+========================================================= */
 
 window.editProject =
   async function(id) {
@@ -1280,15 +1226,12 @@ window.editProject =
           item.id === id
       );
 
-
     if (!project) {
       return;
     }
 
-
     currentProject =
       project;
-
 
     $("projectId").value =
       project.id;
@@ -1317,7 +1260,6 @@ window.editProject =
     $("heroOrder").value =
       project.hero_order || 0;
 
-
     currentProjectPhotos =
       (
         project.project_images ||
@@ -1325,89 +1267,90 @@ window.editProject =
       )
       .slice()
       .sort(
-        (a,b) =>
-          (a.sort_order || 0) -
-          (b.sort_order || 0)
+        (a, b) =>
+          Number(
+            a.sort_order || 0
+          ) -
+          Number(
+            b.sort_order || 0
+          )
       );
-
 
     renderProjectPhotoPreview();
 
-
-    window.scrollTo({
-      top:
-        $("projectForm")
-          .getBoundingClientRect()
-          .top +
-        window.scrollY -
-        80,
-      behavior:
-        "smooth"
-    });
-
+    scrollToElement(
+      "projectForm"
+    );
   };
 
 
+/* =========================================================
+   RESET PROJECT
+========================================================= */
 
-$("cancelProjectBtn")
-  .addEventListener(
+if ($("cancelProjectBtn")) {
+  $("cancelProjectBtn").addEventListener(
     "click",
     resetProjectForm
   );
-
-
+}
 
 function resetProjectForm() {
 
-  $("projectForm")
-    .reset();
+  if ($("projectForm"))
+    $("projectForm").reset();
 
-  $("projectId").value =
-    "";
+  if ($("projectId"))
+    $("projectId").value = "";
 
-  $("projectPublished").checked =
-    true;
+  if ($("projectPublished"))
+    $("projectPublished").checked = true;
 
-  $("heroEnabled").checked =
-    false;
+  if ($("heroEnabled"))
+    $("heroEnabled").checked = false;
 
-  $("projectPhotoPreview")
-    .innerHTML =
-    "";
+  if ($("heroOrder"))
+    $("heroOrder").value = 0;
+
+  if ($("projectPhotoPreview"))
+    $("projectPhotoPreview").innerHTML = "";
 
   currentProject =
     null;
 
   currentProjectPhotos =
     [];
-
 }
 
 
+/* =========================================================
+   PROJECT PHOTO PREVIEW
+========================================================= */
 
 function renderProjectPhotoPreview() {
 
   const container =
     $("projectPhotoPreview");
 
+  if (!container)
+    return;
 
   container.innerHTML =
     currentProjectPhotos
       .map(
         (photo, index) => `
-
           <div class="photo-card">
 
             <img
-              src="${escapeHtml(
+              src="${escapeAttribute(
                 photo.image_url
               )}"
-              alt=""
+              alt="${escapeAttribute(
+                photo.alt_text || ""
+              )}"
             >
 
-            <span
-              class="photo-number"
-            >
+            <span class="photo-number">
               ${index + 1}
             </span>
 
@@ -1419,14 +1362,15 @@ function renderProjectPhotoPreview() {
             </button>
 
           </div>
-
         `
       )
       .join("");
-
 }
 
 
+/* =========================================================
+   DELETE PROJECT PHOTO
+========================================================= */
 
 window.deleteProjectPhoto =
   async function(id) {
@@ -1439,15 +1383,11 @@ window.deleteProjectPhoto =
       return;
     }
 
-
-    const {
-      error
-    } =
+    const { error } =
       await sb
         .from("project_images")
         .delete()
         .eq("id", id);
-
 
     if (error) {
 
@@ -1458,9 +1398,7 @@ window.deleteProjectPhoto =
       );
 
       return;
-
     }
-
 
     if (currentProject) {
 
@@ -1469,12 +1407,13 @@ window.deleteProjectPhoto =
       editProject(
         currentProject.id
       );
-
     }
-
   };
 
 
+/* =========================================================
+   DELETE PROJECT
+========================================================= */
 
 window.deleteProject =
   async function(id) {
@@ -1487,24 +1426,36 @@ window.deleteProject =
       return;
     }
 
+    const {
+      error: photoError
+    } =
+      await sb
+        .from("project_images")
+        .delete()
+        .eq(
+          "project_id",
+          id
+        );
 
-    await sb
-      .from("project_images")
-      .delete()
-      .eq(
-        "project_id",
-        id
+    if (photoError) {
+
+      message(
+        "projectMessage",
+        photoError.message,
+        true
       );
 
+      return;
+    }
 
-    const {
-      error
-    } =
+    const { error } =
       await sb
         .from("projects")
         .delete()
-        .eq("id", id);
-
+        .eq(
+          "id",
+          id
+        );
 
     if (error) {
 
@@ -1515,55 +1466,64 @@ window.deleteProject =
       );
 
       return;
-
     }
-
 
     resetProjectForm();
 
     await loadProjects();
 
+    message(
+      "projectMessage",
+      "Project deleted."
+    );
   };
 
 
+/* =========================================================
+   PROJECT AI
+========================================================= */
 
-/* AI PROJECT */
+if ($("generateProjectAiBtn")) {
 
-$("generateProjectAiBtn")
-  .addEventListener(
-    "click",
-    async () => {
+  $("generateProjectAiBtn")
+    .addEventListener(
+      "click",
+      async () => {
 
-      const id =
-        $("projectId")
-          .value
-          .trim();
+        const id =
+          value("projectId");
 
+        if (!id) {
 
-      if (!id) {
+          message(
+            "projectMessage",
+            "Save the project first. The Project ID is created automatically when you save it.",
+            true
+          );
 
-        message(
-          "projectMessage",
-          "Save the project first, then generate AI content.",
-          true
+          return;
+        }
+
+        await generateProjectAI(
+          id
         );
-
-        return;
-
       }
-
-
-      await generateProjectAI(
-        id
-      );
-
-    }
-  );
-
-
+    );
+}
 
 window.generateProjectAI =
   async function(id) {
+
+    if (!id) {
+
+      message(
+        "projectMessage",
+        "Project ID is required. Save the project first.",
+        true
+      );
+
+      return;
+    }
 
     const {
       data: {
@@ -1571,7 +1531,6 @@ window.generateProjectAI =
       }
     } =
       await sb.auth.getSession();
-
 
     if (!session) {
 
@@ -1582,15 +1541,12 @@ window.generateProjectAI =
       );
 
       return;
-
     }
-
 
     message(
       "projectMessage",
-      "AI is analyzing the project photographs..."
+      "Gemini AI is analyzing the project photographs..."
     );
-
 
     try {
 
@@ -1598,73 +1554,78 @@ window.generateProjectAI =
         await fetch(
           `${SUPABASE_URL}/functions/v1/generate-project-content`,
           {
-            method: "POST",
+            method:
+              "POST",
 
             headers: {
-
               "Content-Type":
                 "application/json",
 
               "Authorization":
                 `Bearer ${session.access_token}`
-
             },
 
             body:
               JSON.stringify({
-                project_id: id
+                project_id:
+                  id
               })
-
           }
         );
 
+      let result = {};
 
-      const result =
-        await response.json();
-
+      try {
+        result =
+          await response.json();
+      } catch {
+        result = {};
+      }
 
       if (!response.ok) {
 
         throw new Error(
           result.error ||
-          "AI generation failed."
+          result.message ||
+          `AI generation failed (${response.status}).`
         );
-
       }
-
 
       await loadProjects();
 
-      editProject(id);
-
+      editProject(
+        id
+      );
 
       message(
         "projectMessage",
-        "AI content generated. Review it and save any changes."
+        "AI content generated successfully. Review the project before publishing."
       );
 
     } catch (error) {
 
-      message(
-        "projectMessage",
-        error.message,
-        true
+      console.error(
+        "Project AI error:",
+        error
       );
 
+      message(
+        "projectMessage",
+        error.message ||
+          "AI generation failed.",
+        true
+      );
     }
-
   };
 
 
-
-/* INSIGHTS */
+/* =========================================================
+   INSIGHTS
+========================================================= */
 
 async function loadInsights() {
 
-  const {
-    data,
-    error
-  } =
+  const { data, error } =
     await sb
       .from("insights")
       .select("*")
@@ -1675,7 +1636,6 @@ async function loadInsights() {
         }
       );
 
-
   if (error) {
 
     message(
@@ -1685,32 +1645,26 @@ async function loadInsights() {
     );
 
     return;
-
   }
-
 
   insights =
     data || [];
 
-
   renderInsightList();
-
 }
-
-
 
 function renderInsightList() {
 
   const list =
     $("insightList");
 
+  if (!list) return;
 
   list.innerHTML =
     insights.length
       ? insights
           .map(
             article => `
-
               <div class="list-item">
 
                 <div>
@@ -1740,7 +1694,6 @@ function renderInsightList() {
 
                 </div>
 
-
                 <div class="list-actions">
 
                   <button
@@ -1761,190 +1714,188 @@ function renderInsightList() {
                 </div>
 
               </div>
-
             `
           )
           .join("")
       : `<p class="muted">
           No articles yet.
         </p>`;
-
 }
 
 
+/* =========================================================
+   INSIGHT SAVE
+========================================================= */
 
-$("insightForm").addEventListener(
-  "submit",
-  async event => {
+if ($("insightForm")) {
 
-    event.preventDefault();
+  $("insightForm")
+    .addEventListener(
+      "submit",
+      async event => {
 
+        event.preventDefault();
 
-    const id =
-      $("insightId")
-        .value
-        .trim();
+        const id =
+          value("insightId");
 
+        const title =
+          value("insightTitle");
 
-    const title =
-      $("insightTitle")
-        .value
-        .trim();
+        if (!title) {
 
+          message(
+            "insightMessage",
+            "Please enter an article title.",
+            true
+          );
 
-    let slug =
-      $("insightSlug")
-        .value
-        .trim();
+          return;
+        }
 
+        let slug =
+          value("insightSlug");
 
-    if (!slug) {
+        if (!slug) {
+          slug =
+            slugify(title);
+        }
 
-      slug =
-        slugify(title);
+        const tags =
+          value("insightTags")
+            .split(",")
+            .map(
+              item =>
+                item.trim()
+            )
+            .filter(Boolean);
 
-    }
+        const payload = {
 
+          title,
 
-    const tags =
-      $("insightTags")
-        .value
-        .split(",")
-        .map(
-          item =>
-            item.trim()
-        )
-        .filter(Boolean);
+          slug,
 
+          category:
+            value("insightCategory"),
 
-    const payload = {
+          excerpt:
+            value("insightExcerpt"),
 
-      title,
+          content:
+            value("insightContent"),
 
-      slug,
+          seo_title:
+            value("insightSeoTitle"),
 
-      category:
-        $("insightCategory")
-          .value
-          .trim(),
+          seo_description:
+            value(
+              "insightSeoDescription"
+            ),
 
-      excerpt:
-        $("insightExcerpt")
-          .value
-          .trim(),
+          tags,
 
-      content:
-        $("insightContent")
-          .value
-          .trim(),
+          cover_image_url:
+            value(
+              "insightCoverImage"
+            ),
 
-      seo_title:
-        $("insightSeoTitle")
-          .value
-          .trim(),
+          published:
+            isChecked(
+              "insightPublished",
+              false
+            ),
 
-      seo_description:
-        $("insightSeoDescription")
-          .value
-          .trim(),
+          published_at:
+            isChecked(
+              "insightPublished",
+              false
+            )
+              ? new Date()
+                  .toISOString()
+              : null
+        };
 
-      tags,
+        let result;
 
-      cover_image_url:
-        $("insightCoverImage")
-          .value
-          .trim(),
+        if (id) {
 
-      published:
-        $("insightPublished")
-          .checked,
+          result =
+            await sb
+              .from("insights")
+              .update(payload)
+              .eq(
+                "id",
+                id
+              );
 
-      published_at:
-        $("insightPublished")
-          .checked
-          ? new Date().toISOString()
-          : null,
+        } else {
 
-      updated_at:
-        new Date().toISOString()
+          result =
+            await sb
+              .from("insights")
+              .insert(
+                payload
+              );
+        }
 
-    };
+        if (result.error) {
 
+          message(
+            "insightMessage",
+            result.error.message,
+            true
+          );
 
-    let result;
+          return;
+        }
 
+        message(
+          "insightMessage",
+          "Article saved successfully."
+        );
 
-    if (id) {
+        resetInsightForm();
 
-      result =
-        await sb
-          .from("insights")
-          .update(payload)
-          .eq("id", id);
-
-    } else {
-
-      result =
-        await sb
-          .from("insights")
-          .insert(payload);
-
-    }
-
-
-    if (result.error) {
-
-      message(
-        "insightMessage",
-        result.error.message,
-        true
-      );
-
-      return;
-
-    }
-
-
-    message(
-      "insightMessage",
-      "Article saved successfully."
+        await loadInsights();
+      }
     );
+}
 
 
-    resetInsightForm();
+/* =========================================================
+   RESET INSIGHT
+========================================================= */
 
-    await loadInsights();
+if ($("cancelInsightBtn")) {
 
-  }
-);
-
-
-
-$("cancelInsightBtn")
-  .addEventListener(
-    "click",
-    resetInsightForm
-  );
-
-
+  $("cancelInsightBtn")
+    .addEventListener(
+      "click",
+      resetInsightForm
+    );
+}
 
 function resetInsightForm() {
 
-  $("insightForm")
-    .reset();
+  if ($("insightForm"))
+    $("insightForm").reset();
 
-  $("insightId").value =
-    "";
+  if ($("insightId"))
+    $("insightId").value = "";
 
-  $("insightPublished").checked =
-    false;
+  if ($("insightPublished"))
+    $("insightPublished").checked =
+      false;
 
   currentInsight =
     null;
-
 }
 
 
+/* =========================================================
+   EDIT INSIGHT
+========================================================= */
 
 window.editInsight =
   function(id) {
@@ -1955,15 +1906,11 @@ window.editInsight =
           item.id === id
       );
 
-
-    if (!article) {
+    if (!article)
       return;
-    }
-
 
     currentInsight =
       article;
-
 
     $("insightId").value =
       article.id;
@@ -1990,31 +1937,28 @@ window.editInsight =
       article.seo_description || "";
 
     $("insightTags").value =
-      Array.isArray(article.tags)
+      Array.isArray(
+        article.tags
+      )
         ? article.tags.join(", ")
         : "";
 
     $("insightCoverImage").value =
-      article.cover_image_url || "";
+      article.cover_image_url ||
+      "";
 
     $("insightPublished").checked =
       article.published === true;
 
-
-    window.scrollTo({
-      top:
-        $("insightForm")
-          .getBoundingClientRect()
-          .top +
-        window.scrollY -
-        80,
-      behavior:
-        "smooth"
-    });
-
+    scrollToElement(
+      "insightForm"
+    );
   };
 
 
+/* =========================================================
+   DELETE INSIGHT
+========================================================= */
 
 window.deleteInsight =
   async function(id) {
@@ -2027,15 +1971,14 @@ window.deleteInsight =
       return;
     }
 
-
-    const {
-      error
-    } =
+    const { error } =
       await sb
         .from("insights")
         .delete()
-        .eq("id", id);
-
+        .eq(
+          "id",
+          id
+        );
 
     if (error) {
 
@@ -2046,39 +1989,37 @@ window.deleteInsight =
       );
 
       return;
-
     }
-
 
     await loadInsights();
 
+    message(
+      "insightMessage",
+      "Article deleted."
+    );
   };
 
 
+/* =========================================================
+   INSIGHT AI
+========================================================= */
 
-/* AI INSIGHT */
+if ($("generateInsightAiBtn")) {
 
-$("generateInsightAiBtn")
-  .addEventListener(
-    "click",
-    generateInsightAI
-  );
-
-
+  $("generateInsightAiBtn")
+    .addEventListener(
+      "click",
+      generateInsightAI
+    );
+}
 
 async function generateInsightAI() {
 
   const title =
-    $("insightTitle")
-      .value
-      .trim();
-
+    value("insightTitle");
 
   const category =
-    $("insightCategory")
-      .value
-      .trim();
-
+    value("insightCategory");
 
   if (!title) {
 
@@ -2089,9 +2030,7 @@ async function generateInsightAI() {
     );
 
     return;
-
   }
-
 
   if (!category) {
 
@@ -2102,9 +2041,7 @@ async function generateInsightAI() {
     );
 
     return;
-
   }
-
 
   const {
     data: {
@@ -2112,7 +2049,6 @@ async function generateInsightAI() {
     }
   } =
     await sb.auth.getSession();
-
 
   if (!session) {
 
@@ -2123,15 +2059,12 @@ async function generateInsightAI() {
     );
 
     return;
-
   }
-
 
   message(
     "insightMessage",
     "Gemini AI is writing your article..."
   );
-
 
   try {
 
@@ -2139,7 +2072,8 @@ async function generateInsightAI() {
       await fetch(
         `${SUPABASE_URL}/functions/v1/generate-insight-content`,
         {
-          method: "POST",
+          method:
+            "POST",
 
           headers: {
 
@@ -2148,7 +2082,6 @@ async function generateInsightAI() {
 
             "Authorization":
               `Bearer ${session.access_token}`
-
           },
 
           body:
@@ -2159,29 +2092,30 @@ async function generateInsightAI() {
               category
 
             })
-
         }
       );
 
+    let result = {};
 
-    const result =
-      await response.json();
-
+    try {
+      result =
+        await response.json();
+    } catch {
+      result = {};
+    }
 
     if (!response.ok) {
 
       throw new Error(
         result.error ||
-        "AI generation failed."
+        result.message ||
+        `AI generation failed (${response.status}).`
       );
-
     }
-
 
     const article =
       result.data ||
       result;
-
 
     $("insightExcerpt").value =
       article.excerpt || "";
@@ -2202,16 +2136,13 @@ async function generateInsightAI() {
         ? article.tags.join(", ")
         : "";
 
-
     if (
       article.slug
     ) {
 
       $("insightSlug").value =
         article.slug;
-
     }
-
 
     message(
       "insightMessage",
@@ -2220,19 +2151,24 @@ async function generateInsightAI() {
 
   } catch (error) {
 
-    message(
-      "insightMessage",
-      error.message,
-      true
+    console.error(
+      "Insight AI error:",
+      error
     );
 
+    message(
+      "insightMessage",
+      error.message ||
+        "AI generation failed.",
+      true
+    );
   }
-
 }
 
 
-
-/* HELPERS */
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function slugify(value) {
 
@@ -2249,10 +2185,7 @@ function slugify(value) {
       /^-+|-+$/g,
       ""
     );
-
 }
-
-
 
 function escapeHtml(value) {
 
@@ -2264,35 +2197,77 @@ function escapeHtml(value) {
 
       const map = {
 
-        "&": "&amp;",
+        "&":
+          "&amp;",
 
-        "<": "&lt;",
+        "<":
+          "&lt;",
 
-        ">": "&gt;",
+        ">":
+          "&gt;",
 
-        '"': "&quot;",
+        '"':
+          "&quot;",
 
-        "'": "&#039;"
-
+        "'":
+          "&#039;"
       };
-
 
       return (
         map[character] ||
         character
       );
-
     }
   );
-
 }
 
-
-
 function escapeAttribute(value) {
+  return escapeHtml(value);
+}
 
-  return escapeHtml(
-    value
+function scrollToElement(id) {
+
+  const el =
+    $(id);
+
+  if (!el)
+    return;
+
+  window.scrollTo({
+
+    top:
+      el.getBoundingClientRect()
+        .top +
+      window.scrollY -
+      80,
+
+    behavior:
+      "smooth"
+  });
+}
+
+function fallbackUuid() {
+
+  return (
+    "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+  ).replace(
+    /[xy]/g,
+    character => {
+
+      const random =
+        Math.random() *
+        16 |
+        0;
+
+      const value =
+        character === "x"
+          ? random
+          : (random & 0x3) |
+            0x8;
+
+      return value.toString(
+        16
+      );
+    }
   );
-
 }
