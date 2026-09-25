@@ -83,13 +83,13 @@ body{background:#fff;color:var(--t-ink)}
 /* MANAGEMENT — LARGE PREMIUM PROFILES */
 .leadership-grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:24px;
+  grid-template-columns:1fr;
+  gap:30px;
 }
 .leader{
   display:grid;
-  grid-template-columns:42% 58%;
-  min-height:520px;
+  grid-template-columns:38% 62%;
+  min-height:620px;
   background:#fff;
   border:1px solid var(--t-line);
   overflow:hidden;
@@ -101,17 +101,18 @@ body{background:#fff;color:var(--t-ink)}
 }
 .leader-photo{
   background:#e7e5df;
-  min-height:520px;
+  min-height:620px;
   overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
 }
+
 .leader-photo img{
   width:100%;
   height:100%;
-  object-fit:cover;
-  object-position:center top;
+  object-fit:contain;
+  object-position:center;
   display:block;
 }
 .leader-content{
@@ -347,7 +348,7 @@ body{background:#fff;color:var(--t-ink)}
   .team-hero h1{font-size:62px}
   .team-section{padding-top:58px}
   .leader{grid-template-columns:1fr}
-  .leader-photo{height:430px;min-height:430px}
+  .leader-photo{height:auto;min-height:430px}
   .leader-content{padding:28px 24px}
   .people-grid{grid-template-columns:1fr 1fr;gap:12px}
   .person-photo{height:300px}
@@ -407,7 +408,7 @@ body{background:#fff;color:var(--t-ink)}
           <h2>People who shape<br>the direction.</h2>
         </div>
         <p>
-          Our management leadership profiles use the larger editorial format.
+          Our management leadership profiles are presented one by one, with each portrait shown in full.
           Team members and positions reporting into the General Manager use the
           original compact employee-card style below.
         </p>
