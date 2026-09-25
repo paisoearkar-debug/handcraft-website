@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insights | Handcraft Myanmar</title>
+<meta name="description" content="Handcraft Myanmar insights on interior design, construction, renovation, furniture, fit-out and practical design ideas.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+:root{
+  --green:#1f8a57;
+  --gold:#b18a52;
+  --ink:#20211f;
+  --muted:#6e706b;
+  --line:#dfded8;
+}
+body{background:#fff;color:var(--ink)}
+.insights-hero{
+  background:linear-gradient(125deg,#f8f7f3,#efeee9);
+  border-bottom:1px solid var(--line);
+  padding:80px 0 72px;
+}
+.kicker{
+  color:var(--gold);
+  font-size:10px;font-weight:800;
+  letter-spacing:.22em;text-transform:uppercase;
+}
+.insights-hero h1{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(52px,7vw,88px);
+  line-height:.92;letter-spacing:-.055em;
+  margin:15px 0 0;
+}
+.insights-hero p{
+  max-width:680px;color:var(--muted);
+  font-size:16px;line-height:1.8;
+  margin:20px 0 0;
+}
+.insights-wrap{padding:70px 0 110px}
+.insights-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+.insight-card{
+  border:1px solid var(--line);
+  background:#fff;
+  overflow:hidden;
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.insight-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 35px rgba(25,35,28,.08);
+}
+.insight-cover{
+  height:230px;
+  background:#e9e7e1;
+  overflow:hidden;
+}
+.insight-cover img{
+  width:100%;height:100%;
+  object-fit:cover;display:block;
+}
+.insight-body{padding:22px}
+.insight-date{
+  color:var(--gold);
+  font-size:9px;font-weight:800;
+  letter-spacing:.15em;text-transform:uppercase;
+}
+.insight-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:25px;line-height:1.08;
+  letter-spacing:-.03em;
+  margin:10px 0 12px;
+}
+.insight-excerpt{
+  color:var(--muted);
+  font-size:12px;line-height:1.7;
+  margin:0;
+}
+.insight-link{
+  display:inline-block;
+  margin-top:18px;
+  color:var(--green);
+  font-size:10px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;
+}
+.insight-link:hover{text-decoration:underline}
+.empty{
+  padding:55px 20px;
+  border:1px dashed #c8c7c1;
+  color:#777;text-align:center;
+  grid-column:1/-1;
+}
+@media(max-width:900px){.insights-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){
+  .insights-hero{padding:60px 0}
+  .insights-grid{grid-template-columns:1fr}
+  .insight-cover{height:210px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html#home">
+      <span data-setting="company_name">HANDCRAFT MYANMAR COMPANY LIMITED</span>
+      <small data-setting="brand_subtitle">MYANMAR</small>
+    </a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu">☰</button>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html#home">Home</a>
+      <a href="index.html#about">About Us</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="insights.html">Insights</a>
+      <a href="team.html">Our Team</a>
+      <a href="index.html#contact">Contact Us</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="insights-hero">
+    <div class="container">
+      <div class="kicker">Handcraft Myanmar / Insights</div>
+      <h1>Insights</h1>
+      <p>
+        Ideas, practical guidance and perspectives on interior design,
+        construction, renovation, furniture and fit-out.
+      </p>
+    </div>
+  </section>
+
+  <section class="insights-wrap">
+    <div class="container">
+      <div id="insightsGrid" class="insights-grid">
+        <div class="empty">Loading insights...</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-company">
+      <strong data-setting="company_name">HANDCRAFT MYANMAR COMPANY LIMITED</strong>
+      <p>Design • Build • Fit-Out</p>
+    </div>
+    <div class="footer-links">
+      <a href="index.html#home">Home</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="insights.html">Insights</a>
+      <a href="team.html">Our Team</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <div class="footer-copyright">© <span id="year"></span> Handcraft Myanmar</div>
+  </div>
+</footer>
+
+<script>
+const SUPABASE_URL="https://jvaqtuiyswjybasfumjw.supabase.co";
+const SUPABASE_KEY="sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
+
+const esc=v=>String(v??"").replace(/[&<>\"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+}[c]));
+
+function formatDate(value){
+  if(!value)return "";
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime()))return "";
+  return d.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+}
+
+async function loadInsights(){
+  const grid=document.getElementById("insightsGrid");
+
+  try{
+    const query=new URLSearchParams({
+      select:"id,slug,title,excerpt,cover_image_url,published_at,created_at,status",
+      order:"published_at.desc,created_at.desc"
+    });
+
+    const r=await fetch(
+      `${SUPABASE_URL}/rest/v1/insights?${query}`,
+      {
+        headers:{
+          apikey:SUPABASE_KEY,
+          Authorization:`Bearer ${SUPABASE_KEY}`,
+          Accept:"application/json"
+        }
+      }
+    );
+
+    if(!r.ok)throw new Error(`Supabase returned HTTP ${r.status}`);
+
+    const rows=await r.json();
+
+    const published=rows.filter(x =>
+      !x.status || String(x.status).toLowerCase()==="published"
+    );
+
+    if(!published.length){
+      grid.innerHTML='<div class="empty">No published insights yet.</div>';
+      return;
+    }
+
+    grid.innerHTML=published.map(item=>{
+      const date=formatDate(item.published_at || item.created_at);
+      const slug=item.slug ? `?slug=${encodeURIComponent(item.slug)}` : "";
+
+      return `
+        <article class="insight-card">
+          <div class="insight-cover">
+            ${
+              item.cover_image_url
+                ? `<img src="${esc(item.cover_image_url)}" alt="${esc(item.title)}" loading="lazy">`
+                : ""
+            }
+          </div>
+          <div class="insight-body">
+            <div class="insight-date">${esc(date)}</div>
+            <h2 class="insight-title">${esc(item.title)}</h2>
+            <p class="insight-excerpt">${esc(item.excerpt || "")}</p>
+            <a class="insight-link" href="index.html#insights${slug}">
+              Read Insight →
+            </a>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+  }catch(error){
+    console.error(error);
+    grid.innerHTML=`
+      <div class="empty">
+        Unable to load insights right now.<br>
+        ${esc(error.message || "Unknown error")}
+      </div>
+    `;
+  }
+}
+
+const menuToggle=document.getElementById("menuToggle");
+const mainNav=document.getElementById("mainNav");
+
+if(menuToggle&&mainNav){
+  menuToggle.addEventListener("click",()=>mainNav.classList.toggle("open"));
+  mainNav.querySelectorAll("a").forEach(a =>
+    a.addEventListener("click",()=>mainNav.classList.remove("open"))
+  );
+}
+
+document.getElementById("year").textContent=new Date().getFullYear();
+loadInsights();
+</script>
+
+</body>
+</html>
