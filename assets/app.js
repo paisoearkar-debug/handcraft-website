@@ -303,7 +303,11 @@ async function loadSettings() {
     data.instagram_url
   );
 
-
+setSocial(
+  "tiktok_url",
+  data.tiktok_url
+);
+  
   setSocial(
     "youtube_url",
     data.youtube_url
