@@ -8,45 +8,115 @@
 <link rel="stylesheet" href="assets/style.css">
 
 <style>
-:root{--gold:#b18a52;--line:#e5e5e5}
-.team-page{padding:88px 0 110px}
-.team-head{max-width:780px;margin-bottom:58px}
-.team-head h1{font-size:clamp(44px,6vw,78px);line-height:1;margin:10px 0 18px;letter-spacing:-.04em}
-.team-head p{font-size:17px;line-height:1.8;color:#707070}
-.team-section{margin-top:70px}
-.team-section-title{display:flex;align-items:end;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:28px}
-.team-section-title h2{margin:0;font-size:28px}
-.team-section-title span{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.13em}
+:root{
+  --gold:#b18a52;
+  --ink:#171717;
+  --muted:#737373;
+  --line:#e6e3de;
+  --paper:#f7f6f3;
+}
+
+.team-page{padding:0 0 110px;background:#fff}
+
+.team-hero{
+  position:relative;overflow:hidden;padding:92px 0 82px;
+  background:radial-gradient(circle at 85% 20%,rgba(177,138,82,.13),transparent 32%),
+             linear-gradient(135deg,#faf9f6 0%,#f3f1ed 100%);
+  border-bottom:1px solid var(--line)
+}
+.team-hero:after{
+  content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(177,138,82,.18);
+  border-radius:50%;right:-130px;top:-150px
+}
+.team-hero-inner{
+  position:relative;z-index:1;display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(280px,.55fr);
+  gap:70px;align-items:end
+}
+.team-kicker{
+  display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:800;
+  letter-spacing:.18em;color:var(--gold);text-transform:uppercase
+}
+.team-kicker:before{content:"";width:34px;height:1px;background:var(--gold)}
+.team-head h1{
+  font-size:clamp(52px,7vw,96px);line-height:.94;margin:18px 0 22px;
+  letter-spacing:-.055em;color:var(--ink)
+}
+.team-head p{max-width:680px;margin:0;font-size:18px;line-height:1.75;color:var(--muted)}
+.team-hero-note{border-left:2px solid var(--gold);padding:8px 0 8px 24px}
+.team-hero-note strong{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.team-hero-note span{display:block;color:#777;font-size:13px;line-height:1.65}
+
+.team-content{padding-top:74px}
+.team-section{margin-top:72px}
+.team-section:first-child{margin-top:0}
+.team-section-title{
+  display:flex;align-items:end;justify-content:space-between;gap:20px;
+  border-bottom:1px solid var(--line);padding-bottom:17px;margin-bottom:30px
+}
+.team-section-title h2{margin:0;font-size:29px;letter-spacing:-.025em}
+.team-section-title span{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.16em}
+
+.org-shell{background:var(--paper);border:1px solid var(--line);padding:44px 34px 48px;overflow:hidden}
+.org-intro{max-width:650px;margin:0 auto 34px;text-align:center;color:#777;font-size:13px;line-height:1.7}
+.org-wrap{overflow-x:auto;padding:8px 10px 22px}
+.org-tree,.org-tree ul{list-style:none;margin:0;padding:0;text-align:center}
+.org-tree>li{display:inline-block;min-width:205px}
+.org-tree ul{display:flex;justify-content:center;gap:18px;position:relative;padding-top:34px}
+.org-tree ul:before{content:"";position:absolute;top:0;left:50%;height:1px;width:1px;background:#cfc9bf}
+.org-tree li{position:relative;padding-top:20px}
+.org-tree ul>li:before{content:"";position:absolute;top:0;left:50%;width:1px;height:20px;background:#cfc9bf}
+.org-tree ul>li:not(:first-child):after{
+  content:"";position:absolute;top:0;left:calc(-50% - 9px);right:50%;height:1px;background:#cfc9bf
+}
+.org-node{
+  width:194px;border:1px solid #dedad2;background:#fff;padding:16px 14px;
+  text-align:center;box-shadow:0 7px 22px rgba(25,25,25,.045)
+}
+.org-tree>li>.org-node{border-top:3px solid var(--gold);padding-top:14px}
+.org-node strong{display:block;font-size:13px;letter-spacing:.01em}
+.org-node span{display:block;color:#777;font-size:10px;margin-top:6px;line-height:1.45}
+.org-node small{display:block;color:var(--gold);font-size:8px;margin-top:7px;letter-spacing:.12em;text-transform:uppercase}
+
 .team-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.team-card{border:1px solid var(--line);background:#fff;overflow:hidden;transition:.25s}
-.team-card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(0,0,0,.08)}
+.team-card{
+  border:1px solid var(--line);background:#fff;overflow:hidden;
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease
+}
+.team-card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(0,0,0,.08);border-color:#d8d1c4}
 .team-photo{aspect-ratio:4/4.5;background:#eee;overflow:hidden}
-.team-photo img{width:100%;height:100%;object-fit:cover}
+.team-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+.team-card:hover .team-photo img{transform:scale(1.025)}
 .team-info{padding:20px}
 .team-id{font-size:10px;letter-spacing:.12em;color:var(--gold);font-weight:800;text-transform:uppercase}
-.team-name{font-size:21px;font-weight:800;margin:7px 0 4px}
+.team-name{font-size:21px;font-weight:800;margin:7px 0 4px;letter-spacing:-.02em}
 .team-position{font-size:13px;color:#555}
 .team-department{font-size:11px;color:#999;margin-top:7px}
 .team-bio{font-size:13px;line-height:1.7;color:#666;margin:14px 0 0}
 .team-links{margin-top:15px;padding-top:13px;border-top:1px solid #eee}
 .team-contact-note{font-size:11px;color:#777;font-weight:700;letter-spacing:.01em}
-.org-wrap{overflow:auto;padding:10px 0 30px}
-.org-tree,.org-tree ul{list-style:none;margin:0;padding:0;text-align:center}
-.org-tree>li{display:inline-block}
-.org-tree ul{display:flex;justify-content:center;gap:26px;position:relative;padding-top:34px}
-.org-tree ul:before{content:"";position:absolute;top:0;left:50%;height:1px;width:2px;background:#ccc}
-.org-tree li{position:relative;padding-top:20px}
-.org-tree ul>li:before{content:"";position:absolute;top:0;left:50%;width:1px;height:20px;background:#ccc}
-.org-tree ul>li:not(:first-child):after{content:"";position:absolute;top:0;left:calc(-50% - 13px);right:50%;height:1px;background:#ccc}
-.org-node{width:190px;border:1px solid var(--line);background:#fff;padding:15px 13px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.05)}
-.org-node strong{display:block;font-size:14px}
-.org-node span{display:block;color:#777;font-size:11px;margin-top:5px}
-.org-node small{display:block;color:var(--gold);font-size:9px;margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
 .team-empty{text-align:center;color:#777;padding:50px 20px;border:1px dashed #ccc}
-.team-error{white-space:pre-wrap;text-align:left;color:#8b1e1e;background:#fff6f6;border:1px solid #e7b8b8;padding:18px;margin:0}
-@media(max-width:1050px){.team-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:760px){.team-page{padding:55px 0 80px}.team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.org-tree ul{gap:14px}.org-node{width:155px}}
-@media(max-width:520px){.team-grid{grid-template-columns:1fr}.team-section-title{align-items:flex-start;flex-direction:column}.org-node{width:145px}}
+.team-error{white-space:pre-wrap;text-align:left;color:#8b1e1e;background:#fff6f6;border:1px solid #e7b8b8;padding:18px}
+
+@media(max-width:1050px){
+  .team-hero-inner{grid-template-columns:1fr;gap:32px}
+  .team-hero-note{max-width:520px}
+  .team-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .team-hero{padding:62px 0 58px}
+  .team-content{padding-top:55px}
+  .team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .org-shell{padding:30px 15px 35px}
+  .org-tree ul{gap:14px}
+  .org-node{width:155px}
+}
+@media(max-width:520px){
+  .team-head h1{font-size:54px}
+  .team-head p{font-size:16px}
+  .team-grid{grid-template-columns:1fr}
+  .team-section-title{align-items:flex-start;flex-direction:column;gap:8px}
+}
 </style>
 </head>
 
@@ -70,21 +140,35 @@
 </header>
 
 <main class="team-page">
-  <div class="container">
+  <section class="team-hero">
+    <div class="container team-hero-inner">
+      <div class="team-head">
+        <div class="team-kicker">People &amp; Craft</div>
+        <h1>Our Team</h1>
+        <p>The people behind Handcraft Myanmar's design, construction, furniture and fit-out projects.</p>
+      </div>
 
-    <div class="team-head">
-      <div class="section-label">PEOPLE &amp; CRAFT</div>
-      <h1>Our Team</h1>
-      <p>The people behind Handcraft Myanmar's design, construction, furniture and fit-out projects.</p>
+      <div class="team-hero-note">
+        <strong>One team. One standard.</strong>
+        <span>Leadership, creative direction, operations and project expertise working together to turn ideas into built environments.</span>
+      </div>
     </div>
+  </section>
 
+  <div class="container team-content">
     <section>
       <div class="team-section-title">
         <h2>Organization Chart</h2>
         <span>Our structure</span>
       </div>
-      <div id="orgChart" class="org-wrap">
-        <div class="team-empty">Loading organization chart...</div>
+
+      <div class="org-shell">
+        <div class="org-intro">
+          Our organization is structured around clear leadership, accountability and collaboration across every project.
+        </div>
+        <div id="orgChart" class="org-wrap">
+          <div class="team-empty">Loading organization chart...</div>
+        </div>
       </div>
     </section>
 
@@ -97,7 +181,6 @@
         <div class="team-empty">Loading team...</div>
       </div>
     </section>
-
   </div>
 </main>
 
@@ -124,7 +207,7 @@ const SUPABASE_URL = "https://jvaqtuiyswjybasfumjw.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
 const TEAM_FIELDS = "id,employee_id,full_name,position,department,bio,email,phone,linkedin_url,photo_url,manager_id,display_order";
 
-const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({
+const esc = value => String(value ?? "").replace(/[&<>\"']/g,c=>({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
 }[c]));
 
@@ -170,7 +253,6 @@ function renderGroups(people){
         <h2>${esc(department)}</h2>
         <span>${members.length} ${members.length===1?"member":"members"}</span>
       </div>
-
       <div class="team-grid">
         ${members.map(person=>`
           <article class="team-card">
@@ -179,14 +261,12 @@ function renderGroups(people){
                 ? `<img src="${esc(person.photo_url)}" alt="${esc(person.full_name)}" loading="lazy">`
                 : ""}
             </div>
-
             <div class="team-info">
               <div class="team-id">${esc(person.employee_id)}</div>
               <div class="team-name">${esc(person.full_name)}</div>
               <div class="team-position">${esc(person.position)}</div>
               ${person.department ? `<div class="team-department">${esc(person.department)}</div>` : ""}
               ${person.bio ? `<p class="team-bio">${esc(person.bio)}</p>` : ""}
-
               <div class="team-links">
                 <span class="team-contact-note">Contact details available upon request.</span>
               </div>
