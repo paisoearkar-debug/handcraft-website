@@ -202,7 +202,7 @@
       throw new Error("Please choose a JPG, PNG or WebP image.");
     }
 
-    if (!window.sb?.storage) {
+    if (!sb?.storage) {
       throw new Error("Supabase storage is not available. Please refresh the Admin page.");
     }
 
