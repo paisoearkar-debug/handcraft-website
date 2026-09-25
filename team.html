@@ -4,118 +4,151 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Team | Handcraft Myanmar</title>
-<meta name="description" content="Meet the team behind Handcraft Myanmar's design, construction, furniture and fit-out projects.">
+<meta name="description" content="Meet the people behind Handcraft Myanmar's design, construction, furniture and fit-out projects.">
 <link rel="stylesheet" href="assets/style.css">
 
 <style>
 :root{
   --gold:#b18a52;
-  --ink:#171717;
-  --muted:#737373;
-  --line:#e6e3de;
-  --paper:#f7f6f3;
+  --gold-soft:#d4bd96;
+  --ink:#202020;
+  --muted:#686868;
+  --line:#e8e4dd;
+  --paper:#f6f5f2;
+  --white:#fff;
 }
 
-.team-page{padding:0 0 110px;background:#fff}
+*{box-sizing:border-box}
+body{background:#fff;color:var(--ink)}
 
+.team-page{padding-bottom:110px;background:#fff}
+
+/* HERO */
 .team-hero{
-  position:relative;overflow:hidden;padding:92px 0 82px;
-  background:radial-gradient(circle at 85% 20%,rgba(177,138,82,.13),transparent 32%),
-             linear-gradient(135deg,#faf9f6 0%,#f3f1ed 100%);
-  border-bottom:1px solid var(--line)
+  position:relative;overflow:hidden;
+  padding:105px 0 92px;
+  background:
+    radial-gradient(circle at 88% 18%,rgba(177,138,82,.13),transparent 30%),
+    linear-gradient(135deg,#fbfaf8 0%,#f2f0eb 100%);
+  border-bottom:1px solid var(--line);
 }
-.team-hero:after{
-  content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(177,138,82,.18);
-  border-radius:50%;right:-130px;top:-150px
+.team-hero:before{
+  content:"";position:absolute;width:520px;height:520px;border:1px solid rgba(177,138,82,.14);
+  border-radius:50%;right:-210px;top:-230px;
 }
-.team-hero-inner{
-  position:relative;z-index:1;display:grid;
-  grid-template-columns:minmax(0,1.45fr) minmax(280px,.55fr);
-  gap:70px;align-items:end
-}
+.team-hero-inner{position:relative;z-index:1}
 .team-kicker{
-  display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:800;
-  letter-spacing:.18em;color:var(--gold);text-transform:uppercase
+  display:flex;align-items:center;gap:12px;
+  color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
 }
-.team-kicker:before{content:"";width:34px;height:1px;background:var(--gold)}
-.team-head h1{
-  font-size:clamp(52px,7vw,96px);line-height:.94;margin:18px 0 22px;
-  letter-spacing:-.055em;color:var(--ink)
+.team-kicker:before{content:"";width:42px;height:1px;background:var(--gold)}
+.team-hero h1{
+  margin:19px 0 18px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(62px,9vw,126px);line-height:.9;letter-spacing:-.06em;font-weight:700;
 }
-.team-head p{max-width:680px;margin:0;font-size:18px;line-height:1.75;color:var(--muted)}
-.team-hero-note{border-left:2px solid var(--gold);padding:8px 0 8px 24px}
-.team-hero-note strong{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
-.team-hero-note span{display:block;color:#777;font-size:13px;line-height:1.65}
+.team-hero p{max-width:720px;margin:0;color:#6d6b67;font-size:18px;line-height:1.75}
 
-.team-content{padding-top:74px}
-.team-section{margin-top:72px}
-.team-section:first-child{margin-top:0}
-.team-section-title{
-  display:flex;align-items:end;justify-content:space-between;gap:20px;
-  border-bottom:1px solid var(--line);padding-bottom:17px;margin-bottom:30px
-}
-.team-section-title h2{margin:0;font-size:29px;letter-spacing:-.025em}
-.team-section-title span{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.16em}
+/* INTRO */
+.team-intro{padding:72px 0 28px}
+.team-intro-row{display:flex;align-items:end;justify-content:space-between;gap:40px;border-bottom:1px solid var(--line);padding-bottom:24px}
+.team-intro h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:40px;line-height:1.1;letter-spacing:-.035em}
+.team-intro-note{max-width:480px;color:#777;font-size:13px;line-height:1.7;text-align:right}
 
-.org-shell{background:var(--paper);border:1px solid var(--line);padding:44px 34px 48px;overflow:hidden}
-.org-intro{max-width:650px;margin:0 auto 34px;text-align:center;color:#777;font-size:13px;line-height:1.7}
-.org-wrap{overflow-x:auto;padding:8px 10px 22px}
-.org-tree,.org-tree ul{list-style:none;margin:0;padding:0;text-align:center}
-.org-tree>li{display:inline-block;min-width:205px}
-.org-tree ul{display:flex;justify-content:center;gap:18px;position:relative;padding-top:34px}
-.org-tree ul:before{content:"";position:absolute;top:0;left:50%;height:1px;width:1px;background:#cfc9bf}
-.org-tree li{position:relative;padding-top:20px}
-.org-tree ul>li:before{content:"";position:absolute;top:0;left:50%;width:1px;height:20px;background:#cfc9bf}
-.org-tree ul>li:not(:first-child):after{
-  content:"";position:absolute;top:0;left:calc(-50% - 9px);right:50%;height:1px;background:#cfc9bf
+/* FEATURE PROFILE */
+.team-profiles{padding-top:42px}
+.team-group{margin-bottom:105px}
+.team-group:last-child{margin-bottom:0}
+.team-group-heading{
+  display:flex;align-items:center;gap:18px;margin:0 0 32px;
+  color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
 }
-.org-node{
-  width:194px;border:1px solid #dedad2;background:#fff;padding:16px 14px;
-  text-align:center;box-shadow:0 7px 22px rgba(25,25,25,.045)
-}
-.org-tree>li>.org-node{border-top:3px solid var(--gold);padding-top:14px}
-.org-node strong{display:block;font-size:13px;letter-spacing:.01em}
-.org-node span{display:block;color:#777;font-size:10px;margin-top:6px;line-height:1.45}
-.org-node small{display:block;color:var(--gold);font-size:8px;margin-top:7px;letter-spacing:.12em;text-transform:uppercase}
+.team-group-heading:after{content:"";height:1px;flex:1;background:var(--line)}
 
-.team-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.team-card{
-  border:1px solid var(--line);background:#fff;overflow:hidden;
-  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease
+.team-profile{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  min-height:620px;background:#fff;border:1px solid var(--line);overflow:hidden;
+  margin-bottom:46px;
 }
-.team-card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(0,0,0,.08);border-color:#d8d1c4}
-.team-photo{aspect-ratio:4/4.5;background:#eee;overflow:hidden}
-.team-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
-.team-card:hover .team-photo img{transform:scale(1.025)}
-.team-info{padding:20px}
-.team-id{font-size:10px;letter-spacing:.12em;color:var(--gold);font-weight:800;text-transform:uppercase}
-.team-name{font-size:21px;font-weight:800;margin:7px 0 4px;letter-spacing:-.02em}
-.team-position{font-size:13px;color:#555}
-.team-department{font-size:11px;color:#999;margin-top:7px}
-.team-bio{font-size:13px;line-height:1.7;color:#666;margin:14px 0 0}
-.team-links{margin-top:15px;padding-top:13px;border-top:1px solid #eee}
-.team-contact-note{font-size:11px;color:#777;font-weight:700;letter-spacing:.01em}
-.team-empty{text-align:center;color:#777;padding:50px 20px;border:1px dashed #ccc}
+.team-profile:nth-child(even){background:#faf9f6}
+.team-profile-image{min-height:620px;background:#eceae5;overflow:hidden}
+.team-profile-image img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;transition:transform .7s ease}
+.team-profile:hover .team-profile-image img{transform:scale(1.018)}
+
+.team-profile-content{
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:58px 62px 54px;
+}
+.team-profile-top{display:flex;align-items:center;gap:12px;margin-bottom:19px}
+.team-profile-id{font-size:10px;color:var(--gold);font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.team-profile-rule{width:34px;height:1px;background:var(--gold)}
+.team-profile-name{
+  margin:0 0 8px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(44px,4.2vw,70px);line-height:.98;letter-spacing:-.045em;font-weight:700;
+}
+.team-profile-position{font-size:18px;color:#333;margin-bottom:30px}
+.team-profile-company{font-size:10px;letter-spacing:.22em;color:#8a8884;text-transform:uppercase;margin-bottom:36px}
+
+.team-scope-label{font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:9px}
+.team-scope{font-size:16px;line-height:1.65;color:#383838;margin:0 0 26px;max-width:600px}
+.team-bio{font-size:15px;line-height:1.8;color:#626262;margin:0;max-width:650px}
+
+.team-quote{
+  display:grid;grid-template-columns:74px 1px 1fr;gap:20px;align-items:center;
+  margin-top:42px;padding:24px 24px 24px 20px;background:#f3f2ef;
+}
+.team-quote-mark{
+  font-family:Georgia,"Times New Roman",serif;font-size:72px;line-height:.7;color:var(--gold);font-weight:700;text-align:center;
+}
+.team-quote-line{height:58px;width:1px;background:#c7ae82}
+.team-quote-text{font-family:Georgia,"Times New Roman",serif;font-size:20px;line-height:1.35;font-style:italic;color:#333}
+.team-quote-label{display:block;margin-top:8px;font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:.16em;color:#999;text-transform:uppercase;font-style:normal}
+
+/* alternating editorial composition */
+.team-profile.reverse .team-profile-image{order:2}
+.team-profile.reverse .team-profile-content{order:1}
+
+.team-contact-note{margin-top:18px;font-size:10px;color:#92908b;letter-spacing:.04em}
+
+.team-empty{text-align:center;color:#777;padding:60px 20px;border:1px dashed #ccc}
 .team-error{white-space:pre-wrap;text-align:left;color:#8b1e1e;background:#fff6f6;border:1px solid #e7b8b8;padding:18px}
 
-@media(max-width:1050px){
-  .team-hero-inner{grid-template-columns:1fr;gap:32px}
-  .team-hero-note{max-width:520px}
-  .team-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+/* small closing statement */
+.team-closing{
+  margin-top:100px;padding:70px 30px;text-align:center;background:#f7f6f3;border-top:1px solid var(--line);border-bottom:1px solid var(--line)
 }
-@media(max-width:760px){
-  .team-hero{padding:62px 0 58px}
-  .team-content{padding-top:55px}
-  .team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .org-shell{padding:30px 15px 35px}
-  .org-tree ul{gap:14px}
-  .org-node{width:155px}
+.team-closing-kicker{font-size:10px;color:var(--gold);font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.team-closing h2{margin:15px auto 0;max-width:820px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(30px,4vw,52px);line-height:1.15;letter-spacing:-.035em}
+
+@media(max-width:900px){
+  .team-profile{grid-template-columns:1fr;min-height:0}
+  .team-profile-image{min-height:520px;height:520px}
+  .team-profile.reverse .team-profile-image{order:1}
+  .team-profile.reverse .team-profile-content{order:2}
+  .team-profile-content{padding:48px 42px}
+  .team-intro-row{align-items:flex-start;flex-direction:column}
+  .team-intro-note{text-align:left}
 }
-@media(max-width:520px){
-  .team-head h1{font-size:54px}
-  .team-head p{font-size:16px}
-  .team-grid{grid-template-columns:1fr}
-  .team-section-title{align-items:flex-start;flex-direction:column;gap:8px}
+
+@media(max-width:600px){
+  .team-hero{padding:70px 0 62px}
+  .team-hero h1{font-size:62px}
+  .team-hero p{font-size:16px}
+  .team-intro{padding-top:55px}
+  .team-intro h2{font-size:32px}
+  .team-profiles{padding-top:30px}
+  .team-group{margin-bottom:70px}
+  .team-profile{margin-bottom:30px}
+  .team-profile-image{height:430px;min-height:430px}
+  .team-profile-content{padding:36px 25px 30px}
+  .team-profile-name{font-size:48px}
+  .team-profile-position{font-size:16px}
+  .team-profile-company{margin-bottom:28px}
+  .team-bio{font-size:14px}
+  .team-quote{grid-template-columns:48px 1px 1fr;gap:14px;padding:20px 15px}
+  .team-quote-mark{font-size:55px}
+  .team-quote-text{font-size:17px}
 }
 </style>
 </head>
@@ -142,44 +175,27 @@
 <main class="team-page">
   <section class="team-hero">
     <div class="container team-hero-inner">
-      <div class="team-head">
-        <div class="team-kicker">People &amp; Craft</div>
-        <h1>Our Team</h1>
-        <p>The people behind Handcraft Myanmar's design, construction, furniture and fit-out projects.</p>
-      </div>
-
-      <div class="team-hero-note">
-        <strong>One team. One standard.</strong>
-        <span>Leadership, creative direction, operations and project expertise working together to turn ideas into built environments.</span>
-      </div>
+      <div class="team-kicker">People &amp; Leadership</div>
+      <h1>Our Team</h1>
+      <p>The people behind Handcraft Myanmar — bringing together leadership, creative thinking, operational expertise and craftsmanship to create meaningful spaces.</p>
     </div>
   </section>
 
-  <div class="container team-content">
-    <section>
-      <div class="team-section-title">
-        <h2>Organization Chart</h2>
-        <span>Our structure</span>
-      </div>
-
-      <div class="org-shell">
-        <div class="org-intro">
-          Our organization is structured around clear leadership, accountability and collaboration across every project.
-        </div>
-        <div id="orgChart" class="org-wrap">
-          <div class="team-empty">Loading organization chart...</div>
-        </div>
+  <div class="container">
+    <section class="team-intro">
+      <div class="team-intro-row">
+        <h2>The People Behind<br>the Work</h2>
+        <div class="team-intro-note">Every project is shaped by people. Meet the leadership and team members responsible for turning ideas into design, construction, furniture and fit-out solutions.</div>
       </div>
     </section>
 
-    <section class="team-section">
-      <div class="team-section-title">
-        <h2>Meet Our Team</h2>
-        <span>Handcraft Myanmar</span>
-      </div>
-      <div id="teamSections">
-        <div class="team-empty">Loading team...</div>
-      </div>
+    <section class="team-profiles" id="teamProfiles">
+      <div class="team-empty">Loading team...</div>
+    </section>
+
+    <section class="team-closing">
+      <div class="team-closing-kicker">Handcraft Myanmar</div>
+      <h2>Design with purpose. Build with precision. Create spaces that last.</h2>
     </section>
   </div>
 </main>
@@ -211,81 +227,81 @@ const esc = value => String(value ?? "").replace(/[&<>\"']/g,c=>({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
 }[c]));
 
-function node(person){
-  return `<div class="org-node">
-    <strong>${esc(person.full_name)}</strong>
-    <span>${esc(person.position)}</span>
-    ${person.department ? `<small>${esc(person.department)}</small>` : ""}
-  </div>`;
+function roleScope(position, department){
+  const p=String(position||"").toUpperCase();
+  if(p.includes("CHIEF EXECUTIVE") || p === "CEO") return "Company vision, strategic direction, growth and overall leadership.";
+  if(p.includes("CHIEF FINANCE") || p === "CFO") return "Financial leadership, business planning, controls and long-term financial management.";
+  if(p.includes("CHIEF OPERATION") || p === "COO") return "Operations, execution, team coordination and delivery across the business.";
+  if(p.includes("CREATIVE DIRECTOR")) return "Creative direction, design thinking, visual standards and brand expression.";
+  if(p.includes("GENERAL MANAGER")) return "Day-to-day management, coordination and operational performance across teams.";
+  if(p.includes("SECRETARY")) return "Administrative coordination, communication and executive support.";
+  if(p.includes("ENGINEER")) return "Technical coordination, site execution, quality and project delivery.";
+  if(p.includes("ACCOUNT")) return "Accounting, financial records, reporting and day-to-day financial administration.";
+  if(p.includes("SALES")) return "Client relationships, project enquiries, business development and sales coordination.";
+  if(p.includes("QC") || p.includes("QS")) return "Quality, quantity surveying, cost awareness and project control.";
+  if(p.includes("PRODUCTION")) return "Production planning, workshop coordination and manufacturing execution.";
+  if(p.includes("CARPENTER") || p.includes("ASSEMBLER")) return "Furniture craftsmanship, assembly and hands-on production support.";
+  if(p.includes("ADMIN")) return "Administration, internal coordination and day-to-day office support.";
+  return department ? `${department} — supporting the team through focused expertise and reliable project delivery.` : "Supporting Handcraft Myanmar through focused expertise and reliable project delivery.";
 }
 
-function childrenOf(people,parentId){
-  return people
-    .filter(person => (person.manager_id || null) === parentId)
-    .sort((a,b)=>Number(a.display_order||0)-Number(b.display_order||0));
+function principleFor(position){
+  const p=String(position||"").toUpperCase();
+  if(p.includes("CREATIVE")) return "Good design should feel distinctive, useful and built for real life.";
+  if(p.includes("OPERATION")) return "Great projects come together when people, process and execution move as one.";
+  if(p.includes("FINANCE")) return "Strong foundations create room for responsible, sustainable growth.";
+  if(p.includes("ENGINEER") || p.includes("QC") || p.includes("QS")) return "Precision in the details is what turns a good idea into a finished space.";
+  if(p.includes("SALES")) return "The best projects begin by understanding what the client truly needs.";
+  return "Building better spaces for a brighter tomorrow.";
 }
 
-function buildChildren(people,parentId){
-  return childrenOf(people,parentId).map(person => {
-    const children = childrenOf(people,person.id);
-    return `<li>
-      ${node(person)}
-      ${children.length ? `<ul>${children.map(child => {
-        const grand = childrenOf(people,child.id);
-        return `<li>${node(child)}${grand.length ? `<ul>${buildChildren(people,child.id)}</ul>` : ""}</li>`;
-      }).join("")}</ul>` : ""}
-    </li>`;
-  }).join("");
-}
+function profile(person,index){
+  const reverse=index%2===1;
+  const image=person.photo_url
+    ? `<img src="${esc(person.photo_url)}" alt="${esc(person.full_name)} — ${esc(person.position)}" loading="lazy">`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:12px;letter-spacing:.15em;text-transform:uppercase">Photo coming soon</div>`;
 
-function renderGroups(people){
-  const grouped = new Map();
+  return `
+    <article class="team-profile ${reverse?"reverse":""}">
+      <div class="team-profile-image">${image}</div>
+      <div class="team-profile-content">
+        <div>
+          <div class="team-profile-top">
+            <span class="team-profile-id">${esc(person.employee_id)}</span>
+            <span class="team-profile-rule"></span>
+            <span class="team-profile-id">${esc(person.department || "Handcraft Myanmar")}</span>
+          </div>
 
-  people.forEach(person=>{
-    const department = person.department || "Team";
-    if(!grouped.has(department)) grouped.set(department,[]);
-    grouped.get(department).push(person);
-  });
+          <h2 class="team-profile-name">${esc(person.full_name)}</h2>
+          <div class="team-profile-position">${esc(person.position)}</div>
+          <div class="team-profile-company">HANDCRAFT MYANMAR COMPANY LIMITED</div>
 
-  return [...grouped.entries()].map(([department,members])=>`
-    <section class="team-section">
-      <div class="team-section-title">
-        <h2>${esc(department)}</h2>
-        <span>${members.length} ${members.length===1?"member":"members"}</span>
+          <div class="team-scope-label">Role Focus</div>
+          <p class="team-scope">${esc(roleScope(person.position,person.department))}</p>
+
+          ${person.bio ? `<div class="team-scope-label">Profile</div><p class="team-bio">${esc(person.bio)}</p>` : ""}
+
+          <div class="team-contact-note">Contact details available upon request.</div>
+        </div>
+
+        <div class="team-quote">
+          <div class="team-quote-mark">“</div>
+          <div class="team-quote-line"></div>
+          <div class="team-quote-text">
+            ${esc(principleFor(person.position))}
+            <span class="team-quote-label">Handcraft Myanmar principle</span>
+          </div>
+        </div>
       </div>
-      <div class="team-grid">
-        ${members.map(person=>`
-          <article class="team-card">
-            <div class="team-photo">
-              ${person.photo_url
-                ? `<img src="${esc(person.photo_url)}" alt="${esc(person.full_name)}" loading="lazy">`
-                : ""}
-            </div>
-            <div class="team-info">
-              <div class="team-id">${esc(person.employee_id)}</div>
-              <div class="team-name">${esc(person.full_name)}</div>
-              <div class="team-position">${esc(person.position)}</div>
-              ${person.department ? `<div class="team-department">${esc(person.department)}</div>` : ""}
-              ${person.bio ? `<p class="team-bio">${esc(person.bio)}</p>` : ""}
-              <div class="team-links">
-                <span class="team-contact-note">Contact details available upon request.</span>
-              </div>
-            </div>
-          </article>
-        `).join("")}
-      </div>
-    </section>
-  `).join("");
+    </article>
+  `;
 }
 
 async function loadTeam(){
-  const orgChart=document.getElementById("orgChart");
-  const teamSections=document.getElementById("teamSections");
-
+  const target=document.getElementById("teamProfiles");
   try{
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),10000);
-
     const params=new URLSearchParams({
       select:TEAM_FIELDS,
       active:"eq.true",
@@ -293,19 +309,15 @@ async function loadTeam(){
       order:"display_order.asc,full_name.asc"
     });
 
-    const response=await fetch(
-      `${SUPABASE_URL}/rest/v1/team_members?${params.toString()}`,
-      {
-        method:"GET",
-        headers:{
-          "apikey":SUPABASE_PUBLISHABLE_KEY,
-          "Authorization":`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
-          "Accept":"application/json"
-        },
-        signal:controller.signal
-      }
-    );
-
+    const response=await fetch(`${SUPABASE_URL}/rest/v1/team_members?${params.toString()}`,{
+      method:"GET",
+      headers:{
+        "apikey":SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+        "Accept":"application/json"
+      },
+      signal:controller.signal
+    });
     clearTimeout(timeout);
 
     if(!response.ok){
@@ -314,54 +326,46 @@ async function loadTeam(){
     }
 
     const people=await response.json();
-
     if(!Array.isArray(people)||!people.length){
-      orgChart.innerHTML='<div class="team-empty">Team profiles will appear here soon.</div>';
-      teamSections.innerHTML='<div class="team-empty">Team profiles will appear here soon.</div>';
+      target.innerHTML='<div class="team-empty">Team profiles will appear here soon.</div>';
       return;
     }
 
-    const topLevel=childrenOf(people,null);
+    /* Keep the database display order so the admin page controls the page order. */
+    const groups=new Map();
+    people.forEach(person=>{
+      const department=person.department || "Our Team";
+      if(!groups.has(department)) groups.set(department,[]);
+      groups.get(department).push(person);
+    });
 
-    orgChart.innerHTML=`
-      <ul class="org-tree">
-        ${topLevel.map(person=>{
-          const children=childrenOf(people,person.id);
-          return `<li>
-            ${node(person)}
-            ${children.length ? `<ul>${buildChildren(people,person.id)}</ul>` : ""}
-          </li>`;
-        }).join("")}
-      </ul>
-    `;
-
-    teamSections.innerHTML=renderGroups(people);
+    let globalIndex=0;
+    target.innerHTML=[...groups.entries()].map(([department,members])=>{
+      const html=members.map(person=>profile(person,globalIndex++)).join("");
+      return `<section class="team-group">
+        <div class="team-group-heading">${esc(department)}</div>
+        ${html}
+      </section>`;
+    }).join("");
 
   }catch(error){
     console.error("Team page error:",error);
-
     const message=error?.name==="AbortError"
       ? "The team database request timed out after 10 seconds."
       : (error?.message || "Unknown error while loading the team.");
-
-    orgChart.innerHTML=`<div class="team-error"><strong>Unable to load organization chart.</strong>\n\n${esc(message)}</div>`;
-    teamSections.innerHTML=`<div class="team-error"><strong>Unable to load team.</strong>\n\n${esc(message)}</div>`;
+    target.innerHTML=`<div class="team-error"><strong>Unable to load team.</strong>\n\n${esc(message)}</div>`;
   }
 }
 
 const menuToggle=document.getElementById("menuToggle");
 const mainNav=document.getElementById("mainNav");
-
 if(menuToggle&&mainNav){
   menuToggle.addEventListener("click",()=>mainNav.classList.toggle("open"));
-  mainNav.querySelectorAll("a").forEach(link=>{
-    link.addEventListener("click",()=>mainNav.classList.remove("open"));
-  });
+  mainNav.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>mainNav.classList.remove("open")));
 }
 
 document.getElementById("year").textContent=new Date().getFullYear();
 loadTeam();
 </script>
-
 </body>
 </html>
