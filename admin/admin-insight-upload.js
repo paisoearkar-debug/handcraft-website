@@ -2,11 +2,7 @@
 (function () {
   "use strict";
 
-  const SUPABASE_URL = "https://jvaqtuiyswjybasfumjw.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
   const BUCKET = "insight-images";
-
   const $ = id => document.getElementById(id);
 
   function status(text, type) {
@@ -14,26 +10,6 @@
     if (!el) return;
     el.textContent = text || "";
     el.className = "hc-action-status" + (type ? " " + type : "");
-  }
-
-  function getSupabaseClient() {
-    // admin.js keeps `sb` private with const, so it is not available as window.sb.
-    // Reuse a client exposed globally if one exists; otherwise create a compatible
-    // client here. Supabase auth persists the same browser session.
-    if (window.sb && window.sb.storage) return window.sb;
-
-    if (!window.supabase || !window.supabase.createClient) {
-      throw new Error("Supabase library is not loaded. Please refresh the Admin page.");
-    }
-
-    if (!window.__handcraftInsightSupabase) {
-      window.__handcraftInsightSupabase = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
-    }
-
-    return window.__handcraftInsightSupabase;
   }
 
   async function uploadInsightCover() {
@@ -82,18 +58,8 @@
       return;
     }
 
-    let client;
-
-    try {
-      client = getSupabaseClient();
-    } catch (error) {
-      status(error.message, "error");
-      if (window.handcraftButtonError) {
-        window.handcraftButtonError(button, "Supabase Error");
-        setTimeout(() => {
-          if (button) button.textContent = "Upload Cover Image";
-        }, 1400);
-      }
+    if (typeof sb === "undefined" || !sb || !sb.storage) {
+      status("Supabase is not ready. Please refresh the Admin page.", "error");
       return;
     }
 
@@ -107,7 +73,7 @@
     status("Uploading cover image…");
 
     try {
-      const sessionResult = await client.auth.getSession();
+      const sessionResult = await sb.auth.getSession();
       const session = sessionResult?.data?.session;
 
       if (!session) {
@@ -128,15 +94,17 @@
             ? "webp"
             : "jpg";
 
-      const path = `${title}-${Date.now()}.${extension}`;
+      const path =
+        `${title}-${Date.now()}.${extension}`;
 
-      const upload = await client.storage
-        .from(BUCKET)
-        .upload(path, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type
-        });
+      const upload =
+        await sb.storage
+          .from(BUCKET)
+          .upload(path, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type
+          });
 
       if (upload.error) {
         console.error("Insight cover upload error:", upload.error);
@@ -148,7 +116,7 @@
       }
 
       const publicUrl =
-        client.storage
+        sb.storage
           .from(BUCKET)
           .getPublicUrl(path)
           .data
@@ -176,6 +144,7 @@
         button.disabled = false;
         button.textContent = "Upload Cover Image";
       }
+
     } catch (error) {
       console.error("Insight cover upload error:", error);
 
