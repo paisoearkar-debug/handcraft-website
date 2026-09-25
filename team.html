@@ -102,6 +102,19 @@ body{background:#fff;color:var(--t-ink)}
   .leader-photo{height:auto;min-height:430px}.leader-content{padding:28px 24px}.people-grid{grid-template-columns:1fr 1fr;gap:12px}.person-photo{height:235px}.person-body{padding:17px 14px}.person-name{font-size:21px}.person-bio{font-size:11px}
   .org-card{min-height:82px}.org-download{padding:18px}.team-closing{margin-top:58px;padding:55px 20px}
 }
+
+.team-photo-placeholder{
+  height:100%;
+  min-height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#999;
+  font-size:10px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
 </style>
 </head>
 
@@ -217,194 +230,7 @@ body{background:#fff;color:var(--t-ink)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/app.js?v=7"></script>
 
-<script>
-const SUPABASE_URL = "https://jvaqtuiyswjybasfumjw.supabase.co";
-const SUPABASE_KEY = "sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
-
-const esc = v => String(v ?? "").replace(/[&<>\"']/g, c => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-}[c]));
-
-const leadershipRoles = [
-  "CHIEF EXECUTIVE OFFICER",
-  "CHIEF FINANCE OFFICER",
-  "CHIEF OPERATION OFFICER",
-  "CHIEF OPERATING OFFICER"
-];
-
-function isLeader(position){
-  return leadershipRoles.includes(String(position || "").toUpperCase().trim());
-}
-
-function photoMarkup(url, name, cls = ""){
-  if(url) return `<img class="${cls}" src="${esc(url)}" alt="${esc(name)}" loading="lazy">`;
-  return `<div class="org-avatar ${cls}">${esc(String(name || "?").slice(0,1))}</div>`;
-}
-
-function quoteFor(position){
-  const x = String(position || "").toUpperCase();
-  if(x.includes("FINANCE")) return "Strong foundations create room for responsible, sustainable growth.";
-  if(x.includes("OPERATION")) return "Great projects come together when people, process and execution move as one.";
-  if(x.includes("EXECUTIVE")) return "A clear vision gives every project a meaningful direction.";
-  return "Good work is built through care, collaboration and consistency.";
-}
-
-function leaderCard(person){
-  /* Only Naing Lin Zaw is intentionally reversed. */
-  const isReverse = String(person.full_name || "").trim().toUpperCase() === "NAING LIN ZAW";
-
-  return `
-    <article class="leader ${isReverse ? "reverse" : ""}">
-      <div class="leader-photo">${photoMarkup(person.photo_url, person.full_name)}</div>
-      <div class="leader-content">
-        <div>
-          <div class="leader-role">${esc(person.employee_id)} · ${esc(person.department || "MANAGEMENT")}</div>
-          <h3 class="leader-name">${esc(person.full_name)}</h3>
-          <div class="leader-position">${esc(person.position)}</div>
-          <div class="leader-rule"></div>
-          ${
-            person.bio
-              ? `<p class="leader-bio">${esc(person.bio)}</p>`
-              : `<p class="leader-bio">Leadership, strategic coordination and professional responsibility supporting Handcraft Myanmar's continued growth.</p>`
-          }
-        </div>
-        <div class="leader-quote">${esc(quoteFor(person.position))}</div>
-      </div>
-    </article>
-  `;
-}
-
-function personCard(person){
-  return `
-    <article class="person-card">
-      <div class="person-photo">
-        ${
-          person.photo_url
-            ? `<img src="${esc(person.photo_url)}" alt="${esc(person.full_name)} — ${esc(person.position)}" loading="lazy">`
-            : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#999;font-size:10px;letter-spacing:.15em;text-transform:uppercase;">Photo coming soon</div>`
-        }
-      </div>
-      <div class="person-body">
-        <div class="person-id">${esc(person.employee_id)}</div>
-        <h3 class="person-name">${esc(person.full_name)}</h3>
-        <div class="person-position">${esc(person.position)}</div>
-        <div class="person-dept">${esc(person.department || "Handcraft Myanmar")}</div>
-        ${person.bio ? `<p class="person-bio">${esc(person.bio)}</p>` : ""}
-        <div class="person-contact">Contact details available upon request.</div>
-      </div>
-    </article>
-  `;
-}
-
-function orgCard(person){
-  return `
-    <div class="org-card">
-      ${photoMarkup(person.photo_url, person.full_name)}
-      <div>
-        <div class="org-name">${esc(person.full_name)}</div>
-        <div class="org-position">${esc(person.position)}</div>
-      </div>
-    </div>
-  `;
-}
-
-function orgNode(person, children){
-  return `
-    <div class="org-node">
-      ${orgCard(person)}
-      ${
-        children.length
-          ? `<div class="org-children">${children.map(child => `<div class="org-child">${orgNode(child, child._children || [])}</div>`).join("")}</div>`
-          : ""
-      }
-    </div>
-  `;
-}
-
-async function loadTeam(){
-  const params = new URLSearchParams({
-    select:"id,employee_id,full_name,position,department,bio,photo_url,manager_id,display_order",
-    active:"eq.true",
-    show_public:"eq.true",
-    order:"display_order.asc,full_name.asc"
-  });
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10000);
-
-  try{
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/team_members?${params}`,{
-      headers:{
-        apikey:SUPABASE_KEY,
-        Authorization:`Bearer ${SUPABASE_KEY}`,
-        Accept:"application/json"
-      },
-      signal:controller.signal
-    });
-
-    if(!response.ok) throw new Error(`Supabase returned HTTP ${response.status}`);
-
-    const people = await response.json();
-    clearTimeout(timer);
-
-    if(!people.length){
-      document.getElementById("leadershipGrid").innerHTML='<div class="team-empty">No public management members have been added yet.</div>';
-      document.getElementById("peopleGrid").innerHTML="";
-      document.getElementById("orgTree").innerHTML='<div class="team-empty">Organization structure will appear after employees are added.</div>';
-      return;
-    }
-
-    const leaders = people.filter(p => isLeader(p.position));
-    const others = people.filter(p => !isLeader(p.position));
-
-    document.getElementById("leadershipGrid").innerHTML =
-      leaders.length ? leaders.map(leaderCard).join("") : '<div class="team-empty">Management profiles will appear here.</div>';
-
-    document.getElementById("peopleGrid").innerHTML =
-      others.length ? others.map(personCard).join("") : '<div class="team-empty">Additional team members will appear here.</div>';
-
-    const byId = new Map(people.map(person => [person.id,{...person,_children:[]}]));
-    const roots = [];
-
-    byId.forEach(person => {
-      if(person.manager_id && byId.has(person.manager_id)) byId.get(person.manager_id)._children.push(person);
-      else roots.push(person);
-    });
-
-    byId.forEach(person => {
-      person._children.sort((a,b) => (a.display_order-b.display_order) || a.full_name.localeCompare(b.full_name));
-    });
-
-    roots.sort((a,b) => (a.display_order-b.display_order) || a.full_name.localeCompare(b.full_name));
-
-    document.getElementById("orgTree").innerHTML =
-      roots.map(root => `<div class="org-root">${orgNode(root, root._children)}</div>`).join("");
-
-  }catch(error){
-    clearTimeout(timer);
-    console.error(error);
-
-    const message = error.name === "AbortError"
-      ? "The team database request timed out after 10 seconds."
-      : (error.message || "Unknown error");
-
-    ["leadershipGrid","peopleGrid","orgTree"].forEach(id => {
-      document.getElementById(id).innerHTML = `<div class="team-error"><strong>Unable to load team.</strong>\n\n${esc(message)}</div>`;
-    });
-  }
-}
-
-const menuToggle = document.getElementById("menuToggle");
-const mainNav = document.getElementById("mainNav");
-
-if(menuToggle && mainNav){
-  menuToggle.addEventListener("click", () => mainNav.classList.toggle("open"));
-  mainNav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => mainNav.classList.remove("open")));
-}
-
-document.getElementById("year").textContent = new Date().getFullYear();
-loadTeam();
-</script>
+<script src="assets/team.js?v=1"></script>
 
 </body>
 </html>
