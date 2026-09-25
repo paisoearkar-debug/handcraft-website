@@ -27,315 +27,12 @@
   ========================================================= */
 
   async function init(){
-    const articleRoot = $("articleContent");
-
-    if(articleRoot){
-      await loadStandaloneArticle(articleRoot);
-      await syncSocialLinks();
-      installStyles();
-      return;
-    }
 
     await loadInsights();
+
     await syncSocialLinks();
+
     installStyles();
-  }
-
-
-  /* =========================================================
-     STANDALONE ARTICLE PAGE
-  ========================================================= */
-
-  async function loadStandaloneArticle(root){
-
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
-
-    const slug =
-      params.get("slug") ||
-      params.get("insight");
-
-    const titleEl =
-      $("articleTitle");
-
-    const metaEl =
-      $("articleMeta");
-
-    if(!slug){
-
-      if(titleEl)
-        titleEl.textContent =
-          "Insight not found";
-
-      root.innerHTML =
-        '<div class="article-error">No insight was specified.<br><br><a href="insights.html">← Back to Insights</a></div>';
-
-      return;
-    }
-
-    try{
-
-      const {
-        data: article,
-        error
-      } =
-        await client
-          .from("insights")
-          .select(
-            "id,title,slug,category,excerpt,content,cover_image_url,seo_title,seo_description,tags,published,published_at,created_at"
-          )
-          .eq(
-            "slug",
-            slug
-          )
-          .eq(
-            "published",
-            true
-          )
-          .maybeSingle();
-
-      if(error)
-        throw error;
-
-      if(!article){
-
-        if(titleEl)
-          titleEl.textContent =
-            "Insight not found";
-
-        root.innerHTML =
-          '<div class="article-error">This insight is unavailable.<br><br><a href="insights.html">← Back to Insights</a></div>';
-
-        return;
-      }
-
-      if(titleEl)
-        titleEl.textContent =
-          article.title ||
-          "Insight";
-
-      if(metaEl)
-        metaEl.textContent =
-          [
-            article.category ||
-              "Insights",
-            date(
-              article.published_at ||
-              article.created_at
-            )
-          ]
-          .filter(Boolean)
-          .join(" • ");
-
-      if(article.seo_description){
-
-        let meta =
-          document.querySelector(
-            'meta[name="description"]'
-          );
-
-        if(!meta){
-
-          meta =
-            document.createElement(
-              "meta"
-            );
-
-          meta.name =
-            "description";
-
-          document.head.appendChild(
-            meta
-          );
-
-        }
-
-        meta.content =
-          article.seo_description;
-      }
-
-      document.title =
-        `${
-          article.seo_title ||
-          article.title ||
-          "Insight"
-        } | Handcraft Myanmar`;
-
-      root.innerHTML = `
-        ${
-          article.cover_image_url
-            ? `
-              <img
-                class="article-cover"
-                src="${esc(article.cover_image_url)}"
-                alt="${esc(article.title)}"
-              >
-            `
-            : ""
-        }
-
-        <div class="article-body">
-
-          ${
-            article.excerpt
-              ? `
-                <p class="article-lead">
-                  ${esc(article.excerpt)}
-                </p>
-              `
-              : ""
-          }
-
-          ${articleContent(article.content || "")}
-
-        </div>
-
-        <div class="article-actions">
-
-          <a href="insights.html">
-            ← Back to Insights
-          </a>
-
-          <button
-            type="button"
-            id="standaloneShareBtn"
-          >
-            Share
-          </button>
-
-          <button
-            type="button"
-            id="standaloneCopyBtn"
-          >
-            Copy Link
-          </button>
-
-        </div>
-      `;
-
-      const shareBtn =
-        $("standaloneShareBtn");
-
-      const copyBtn =
-        $("standaloneCopyBtn");
-
-      if(shareBtn){
-
-        shareBtn.addEventListener(
-          "click",
-          async () => {
-
-            if(navigator.share){
-
-              try{
-
-                await navigator.share({
-                  title:
-                    article.title,
-                  text:
-                    article.excerpt ||
-                    "Handcraft Myanmar Insights",
-                  url:
-                    window.location.href
-                });
-
-              }catch(error){
-
-                if(
-                  error &&
-                  error.name !==
-                    "AbortError"
-                ){
-                  await copyStandaloneLink(
-                    copyBtn
-                  );
-                }
-
-              }
-
-            }else{
-
-              await copyStandaloneLink(
-                copyBtn
-              );
-
-            }
-
-          }
-        );
-
-      }
-
-      if(copyBtn){
-
-        copyBtn.addEventListener(
-          "click",
-          () =>
-            copyStandaloneLink(
-              copyBtn
-            )
-        );
-
-      }
-
-    }catch(error){
-
-      console.error(error);
-
-      if(titleEl)
-        titleEl.textContent =
-          "Unable to load insight";
-
-      root.innerHTML =
-        `<div class="article-error">${
-          esc(
-            error.message ||
-            "Unable to load this insight."
-          )
-        }<br><br><a href="insights.html">← Back to Insights</a></div>`;
-    }
-
-  }
-
-
-  async function copyStandaloneLink(
-    button
-  ){
-
-    try{
-
-      await navigator.clipboard.writeText(
-        window.location.href
-      );
-
-      if(button){
-
-        const original =
-          button.textContent;
-
-        button.textContent =
-          "Copied";
-
-        setTimeout(
-          () =>
-            button.textContent =
-              original,
-          1600
-        );
-
-      }
-
-    }catch(error){
-
-      window.prompt(
-        "Copy this link:",
-        window.location.href
-      );
-
-    }
-
   }
 
 
@@ -426,9 +123,7 @@
           () => {
 
             if(article)
-              window.location.href =
-                "insight.html?slug=" +
-                encodeURIComponent(article.slug || article.id);
+              openArticle(article);
 
           }
         );
@@ -445,9 +140,7 @@
               event.preventDefault();
 
               if(article)
-                window.location.href =
-                  "insight.html?slug=" +
-                  encodeURIComponent(article.slug || article.id);
+                openArticle(article);
 
             }
 
@@ -468,14 +161,20 @@
         window.location.search
       ).get("insight");
 
+
     if(requestedSlug){
 
       const requestedArticle =
         articles.find(
           article =>
-            String(article.slug || "") ===
-            String(requestedSlug)
+            String(
+              article.slug || ""
+            ) ===
+            String(
+              requestedSlug
+            )
         );
+
 
       if(requestedArticle){
 
@@ -1003,22 +702,17 @@
       Remove any previous article parameter.
     */
 
-    url.searchParams.delete("insight");
-    url.searchParams.delete("slug");
+    url.searchParams.delete(
+      "insight"
+    );
 
 
     /*
       Add this article's slug.
     */
 
-    url.pathname =
-      url.pathname.replace(
-        /\/insights\.html$/i,
-        "/insight.html"
-      );
-
     url.searchParams.set(
-      "slug",
+      "insight",
       String(
         a.slug ||
         a.id
@@ -1779,88 +1473,6 @@
         cursor:pointer;
       }
 
-
-      /* =====================================================
-         STANDALONE ARTICLE PAGE
-      ===================================================== */
-
-      .article-body{
-        font-size:16px;
-        line-height:1.9;
-        color:#333;
-      }
-
-      .article-lead{
-        font-size:18px;
-        line-height:1.8;
-        color:#666;
-        margin:0 0 30px;
-        padding-bottom:28px;
-        border-bottom:1px solid #ececec;
-      }
-
-      .article-body p{
-        margin:0 0 20px;
-      }
-
-      .article-body h2,
-      .article-body h3{
-        color:#171717;
-        line-height:1.25;
-        margin:38px 0 14px;
-      }
-
-      .article-body img{
-        max-width:100%;
-        height:auto;
-        display:block;
-        margin:28px auto;
-      }
-
-      .article-cover{
-        width:100%;
-        max-height:560px;
-        object-fit:cover;
-        display:block;
-        margin:0 0 42px;
-      }
-
-      .article-actions{
-        display:flex;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-top:40px;
-        padding-top:24px;
-        border-top:1px solid #ececec;
-      }
-
-      .article-actions a,
-      .article-actions button{
-        border:1px solid #d5d5d5;
-        background:#fff;
-        color:#333;
-        padding:10px 15px;
-        border-radius:4px;
-        font-size:10px;
-        font-weight:800;
-        text-transform:uppercase;
-        letter-spacing:.08em;
-        text-decoration:none;
-        cursor:pointer;
-      }
-
-      .article-actions a:hover,
-      .article-actions button:hover{
-        background:#171717;
-        color:#fff;
-        border-color:#171717;
-      }
-
-      .article-error{
-        padding:60px 20px;
-        text-align:center;
-        color:#777;
-      }
 
       /* =====================================================
          TABLET
