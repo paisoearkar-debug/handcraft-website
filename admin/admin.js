@@ -1567,7 +1567,7 @@ window.generateProjectAI =
 
             body:
               JSON.stringify({
-                project_Id:
+                projectId:
                   id
               })
           }
