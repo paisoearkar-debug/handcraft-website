@@ -106,6 +106,17 @@ body{background:#fff;color:var(--t-ink)}
   transform:translateY(-3px);
   box-shadow:0 18px 45px rgba(25,35,28,.08);
 }
+.leader.reverse{
+  grid-template-columns:62% 38%;
+}
+.leader.reverse .leader-photo{
+  grid-column:2;
+  grid-row:1;
+}
+.leader.reverse .leader-content{
+  grid-column:1;
+  grid-row:1;
+}
 .leader-photo{
   background:#e7e5df;
   min-height:620px;
@@ -356,7 +367,12 @@ body{background:#fff;color:var(--t-ink)}
   .team-hero{padding:70px 0 60px}
   .team-hero h1{font-size:62px}
   .team-section{padding-top:58px}
-  .leader{grid-template-columns:1fr}
+  .leader,.leader.reverse{grid-template-columns:1fr}
+  .leader.reverse .leader-photo,
+  .leader.reverse .leader-content{
+    grid-column:auto;
+    grid-row:auto;
+  }
   .leader-photo{height:auto;min-height:430px}
   .leader-content{padding:28px 24px}
   .people-grid{grid-template-columns:1fr 1fr;gap:12px}
@@ -580,8 +596,10 @@ function quoteFor(position){
 }
 
 function leaderCard(person){
+  const isReverse = String(person.position || "").toUpperCase().includes("OPERATION");
+
   return `
-    <article class="leader">
+    <article class="leader ${isReverse ? "reverse" : ""}">
 
       <div class="leader-photo">
         ${photoMarkup(person.photo_url, person.full_name)}
