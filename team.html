@@ -4,85 +4,374 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Team | Handcraft Myanmar</title>
-<meta name="description" content="Meet the leadership and people behind Handcraft Myanmar's design, construction, furniture and fit-out work.">
+<meta name="description" content="Meet the management and team behind Handcraft Myanmar's design, construction, furniture and fit-out work.">
 <link rel="stylesheet" href="assets/style.css">
+
 <style>
-:root{--t-green:#1f8a57;--t-gold:#b18a52;--t-ink:#20211f;--t-muted:#6e706b;--t-paper:#f5f4f0;--t-line:#dfded8;--t-white:#fff}
+:root{
+  --t-green:#1f8a57;
+  --t-gold:#b18a52;
+  --t-ink:#20211f;
+  --t-muted:#6e706b;
+  --t-line:#dfded8;
+  --t-paper:#f6f5f1;
+  --t-white:#fff;
+}
+
 body{background:#fff;color:var(--t-ink)}
 .team-page{padding-bottom:110px}
-.team-hero{background:linear-gradient(125deg,#f8f7f3,#efeee9);border-bottom:1px solid var(--t-line);padding:96px 0 86px;position:relative;overflow:hidden}
-.team-hero:after{content:"";position:absolute;width:500px;height:500px;border:1px solid rgba(177,138,82,.16);border-radius:50%;right:-220px;top:-250px}
-.team-kicker{position:relative;z-index:1;color:var(--t-gold);font-size:10px;font-weight:800;letter-spacing:.24em;text-transform:uppercase}
-.team-hero h1{position:relative;z-index:1;font-family:Georgia,"Times New Roman",serif;font-size:clamp(58px,9vw,118px);line-height:.88;letter-spacing:-.06em;margin:18px 0 20px}
-.team-hero p{position:relative;z-index:1;max-width:720px;margin:0;color:#646660;font-size:17px;line-height:1.8}
+
+/* HERO */
+.team-hero{
+  background:linear-gradient(125deg,#f8f7f3,#efeee9);
+  border-bottom:1px solid var(--t-line);
+  padding:96px 0 86px;
+  position:relative;
+  overflow:hidden;
+}
+.team-hero:after{
+  content:"";
+  position:absolute;
+  width:500px;height:500px;
+  border:1px solid rgba(177,138,82,.16);
+  border-radius:50%;
+  right:-220px;top:-250px;
+}
+.team-kicker{
+  position:relative;z-index:1;
+  color:var(--t-gold);
+  font-size:10px;font-weight:800;
+  letter-spacing:.24em;text-transform:uppercase;
+}
+.team-hero h1{
+  position:relative;z-index:1;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(58px,9vw,118px);
+  line-height:.88;letter-spacing:-.06em;
+  margin:18px 0 20px;
+}
+.team-hero p{
+  position:relative;z-index:1;
+  max-width:720px;margin:0;
+  color:#646660;font-size:17px;line-height:1.8;
+}
+
+/* GENERAL SECTIONS */
 .team-section{padding:78px 0 0}
-.team-section-head{display:flex;justify-content:space-between;align-items:end;gap:35px;margin-bottom:32px}
-.team-section-head h2{font-family:Georgia,"Times New Roman",serif;font-size:44px;line-height:1;letter-spacing:-.045em;margin:0}
-.team-section-head p{max-width:520px;color:#73756f;font-size:14px;line-height:1.7;margin:0}
-.section-kicker{color:var(--t-green);font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px}
-.leadership-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
-.leader{display:grid;grid-template-columns:44% 56%;min-height:440px;background:#fff;border:1px solid var(--t-line);overflow:hidden;transition:transform .25s ease,box-shadow .25s ease}
-.leader:hover{transform:translateY(-3px);box-shadow:0 18px 45px rgba(25,35,28,.08)}
-.leader-photo{background:#e7e5df;min-height:440px;overflow:hidden}
-.leader-photo img{width:100%;height:100%;object-fit:cover;display:block}
-.leader-content{padding:34px 32px;display:flex;flex-direction:column;justify-content:space-between}
-.leader-role{font-size:9px;font-weight:800;letter-spacing:.2em;color:var(--t-gold);text-transform:uppercase}
-.leader-name{font-family:Georgia,"Times New Roman",serif;font-size:clamp(30px,3vw,46px);line-height:.98;letter-spacing:-.045em;margin:13px 0 8px}
-.leader-position{font-size:14px;color:#454741;margin-bottom:22px}
-.leader-rule{width:38px;height:2px;background:var(--t-green);margin-bottom:22px}
-.leader-bio{font-size:13px;line-height:1.75;color:#686b65;margin:0}
-.leader-quote{margin-top:25px;padding-top:17px;border-top:1px solid var(--t-line);font-family:Georgia,"Times New Roman",serif;font-size:15px;font-style:italic;color:#444}
-.leader-quote:before{content:"“";color:var(--t-gold);font-size:28px;vertical-align:-7px;margin-right:4px}
-.org-section{margin-top:96px;padding:76px 0;background:#f6f5f1;border-top:1px solid var(--t-line);border-bottom:1px solid var(--t-line)}
-.org-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:38px}
-.org-head h2{font-family:Georgia,"Times New Roman",serif;font-size:44px;line-height:1;letter-spacing:-.045em;margin:0}
-.org-head p{max-width:520px;color:#70736c;font-size:14px;line-height:1.7;margin:0}
-.org-tree{display:flex;gap:24px;align-items:flex-start;overflow-x:auto;padding:12px 2px 24px}
-.org-root{min-width:330px;flex:1}
-.org-node{position:relative}
-.org-card{background:#fff;border:1px solid var(--t-line);padding:18px 18px 16px;display:flex;align-items:center;gap:15px;min-height:92px}
-.org-card img,.org-avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#e5e4df;flex:0 0 58px}
-.org-avatar{display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#8b8c86}
-.org-name{font-weight:800;font-size:14px;margin-bottom:5px}
-.org-position{font-size:10px;line-height:1.35;color:#777a74;text-transform:uppercase;letter-spacing:.06em}
-.org-children{position:relative;margin:18px 0 0 29px;padding-left:27px;border-left:1px solid #c9c7c0}
-.org-children:before{content:"";position:absolute;left:0;top:27px;width:27px;border-top:1px solid #c9c7c0}
-.org-child{position:relative;margin-bottom:16px}
-.org-child:before{content:"";position:absolute;left:-28px;top:45px;width:28px;border-top:1px solid #c9c7c0}
-.org-more{font-size:10px;color:#8a8b85;margin-top:20px;letter-spacing:.05em}
-.org-download{margin-top:34px;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px 22px;background:#fff;border:1px solid var(--t-line)}
-.org-download strong{font-size:13px}
-.org-download span{display:block;color:#777a74;font-size:12px;margin-top:5px}
-.org-download-btn{border:1px solid #c9c8c1;background:#f3f2ee;color:#9a9b95;padding:12px 16px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;cursor:not-allowed}
+.team-section-head{
+  display:flex;justify-content:space-between;align-items:end;
+  gap:35px;margin-bottom:32px;
+}
+.team-section-head h2,
+.org-head h2{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:44px;line-height:1;
+  letter-spacing:-.045em;margin:0;
+}
+.team-section-head p,
+.org-head p{
+  max-width:520px;color:#73756f;
+  font-size:14px;line-height:1.7;margin:0;
+}
+.section-kicker{
+  color:var(--t-green);
+  font-size:10px;font-weight:800;
+  letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+/* MANAGEMENT — LARGE PREMIUM PROFILES */
+.leadership-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+}
+.leader{
+  display:grid;
+  grid-template-columns:42% 58%;
+  min-height:520px;
+  background:#fff;
+  border:1px solid var(--t-line);
+  overflow:hidden;
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.leader:hover{
+  transform:translateY(-3px);
+  box-shadow:0 18px 45px rgba(25,35,28,.08);
+}
+.leader-photo{
+  background:#e7e5df;
+  min-height:520px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.leader-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+}
+.leader-content{
+  padding:34px 32px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.leader-role{
+  font-size:9px;font-weight:800;
+  letter-spacing:.2em;color:var(--t-gold);
+  text-transform:uppercase;
+}
+.leader-name{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(30px,3vw,46px);
+  line-height:.98;letter-spacing:-.045em;
+  margin:13px 0 8px;
+}
+.leader-position{
+  font-size:14px;color:#454741;margin-bottom:22px;
+}
+.leader-rule{
+  width:38px;height:2px;
+  background:var(--t-green);margin-bottom:22px;
+}
+.leader-bio{
+  font-size:13px;line-height:1.75;
+  color:#686b65;margin:0;
+}
+.leader-quote{
+  margin-top:25px;padding-top:17px;
+  border-top:1px solid var(--t-line);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:15px;font-style:italic;color:#444;
+}
+.leader-quote:before{
+  content:"“";color:var(--t-gold);
+  font-size:28px;vertical-align:-7px;margin-right:4px;
+}
+
+/* OUR PEOPLE — SMALLER ORIGINAL CARD STYLE */
 .people-section{padding-top:82px}
-.people-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
-.person-card{background:#fff;border:1px solid var(--t-line);overflow:hidden;transition:transform .25s ease,box-shadow .25s ease}
-.person-card:hover{transform:translateY(-4px);box-shadow:0 16px 35px rgba(25,35,28,.08)}
-.person-photo{height:330px;background:#e8e6e0;overflow:hidden}
-.person-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.people-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:22px;
+}
+.person-card{
+  background:#fff;
+  border:1px solid var(--t-line);
+  overflow:hidden;
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.person-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 35px rgba(25,35,28,.08);
+}
+.person-photo{
+  height:380px;
+  background:#e8e6e0;
+  overflow:hidden;
+}
+.person-photo img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+  transition:transform .5s ease;
+}
 .person-card:hover .person-photo img{transform:scale(1.025)}
 .person-body{padding:22px 20px 23px}
-.person-id{font-size:9px;color:var(--t-gold);font-weight:800;letter-spacing:.13em;text-transform:uppercase}
-.person-name{font-family:Georgia,"Times New Roman",serif;font-size:26px;line-height:1.02;letter-spacing:-.03em;margin:9px 0 7px}
-.person-position{font-size:12px;color:#3e413d;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.person-dept{font-size:10px;color:#898b85;margin-top:7px}
-.person-bio{font-size:12px;line-height:1.7;color:#70736c;margin:15px 0 0}
-.person-contact{font-size:9px;color:#999a94;margin-top:16px;letter-spacing:.04em}
-.team-closing{margin-top:80px;padding:70px 30px;text-align:center;background:#20211f;color:#fff}
+.person-id{
+  font-size:9px;color:var(--t-gold);
+  font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.person-name{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:26px;line-height:1.02;
+  letter-spacing:-.03em;margin:9px 0 7px;
+}
+.person-position{
+  font-size:12px;color:#3e413d;
+  font-weight:700;text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.person-dept{
+  font-size:10px;color:#898b85;margin-top:7px;
+}
+.person-bio{
+  font-size:12px;line-height:1.7;
+  color:#70736c;margin:15px 0 0;
+}
+.person-contact{
+  font-size:9px;color:#999a94;
+  margin-top:16px;letter-spacing:.04em;
+}
+
+/* ORGANIZATION STRUCTURE — BOTTOM */
+.org-section{
+  margin-top:96px;
+  padding:76px 0;
+  background:#f6f5f1;
+  border-top:1px solid var(--t-line);
+  border-bottom:1px solid var(--t-line);
+}
+.org-head{
+  display:flex;justify-content:space-between;
+  align-items:end;gap:30px;margin-bottom:38px;
+}
+.org-tree{
+  display:flex;gap:24px;
+  align-items:flex-start;
+  overflow-x:auto;
+  padding:12px 2px 24px;
+}
+.org-root{min-width:330px;flex:1}
+.org-node{position:relative}
+.org-card{
+  background:#fff;border:1px solid var(--t-line);
+  padding:18px 18px 16px;
+  display:flex;align-items:center;
+  gap:15px;min-height:92px;
+}
+.org-card img,.org-avatar{
+  width:58px;height:58px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#e5e4df;
+  flex:0 0 58px;
+}
+.org-avatar{
+  display:flex;align-items:center;
+  justify-content:center;
+  font-size:16px;font-weight:800;
+  color:#8b8c86;
+}
+.org-name{font-weight:800;font-size:14px;margin-bottom:5px}
+.org-position{
+  font-size:10px;line-height:1.35;
+  color:#777a74;text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.org-children{
+  position:relative;
+  margin:18px 0 0 29px;
+  padding-left:27px;
+  border-left:1px solid #c9c7c0;
+}
+.org-children:before{
+  content:"";
+  position:absolute;left:0;top:27px;
+  width:27px;border-top:1px solid #c9c7c0;
+}
+.org-child{position:relative;margin-bottom:16px}
+.org-child:before{
+  content:"";position:absolute;
+  left:-28px;top:45px;width:28px;
+  border-top:1px solid #c9c7c0;
+}
+.org-download{
+  margin-top:34px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding:20px 22px;
+  background:#fff;
+  border:1px solid var(--t-line);
+}
+.org-download strong{font-size:13px}
+.org-download span{
+  display:block;color:#777a74;
+  font-size:12px;margin-top:5px;
+}
+.org-download-btn{
+  border:1px solid #c9c8c1;
+  background:#f3f2ee;
+  color:#9a9b95;
+  padding:12px 16px;
+  font-size:10px;font-weight:800;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  cursor:not-allowed;
+}
+
+/* CLOSING */
+.team-closing{
+  margin-top:80px;
+  padding:70px 30px;
+  text-align:center;
+  background:#20211f;
+  color:#fff;
+}
 .team-closing .section-kicker{color:#d2b27a}
-.team-closing h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(30px,4vw,52px);line-height:1.12;letter-spacing:-.04em;max-width:850px;margin:12px auto 0}
-.team-empty,.team-error{padding:50px 20px;border:1px dashed #c8c7c1;color:#777;text-align:center}
-.team-error{text-align:left;background:#fff7f7;border-color:#e5b5b5;color:#8b1e1e;white-space:pre-wrap}
-@media(max-width:1050px){.leadership-grid{grid-template-columns:1fr}.people-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:800px){.team-section-head,.org-head{display:block}.team-section-head p,.org-head p{margin-top:16px}.people-grid{grid-template-columns:repeat(2,1fr)}.org-tree{display:block;overflow:visible}.org-root{min-width:0;margin-bottom:22px}.org-download{display:block}.org-download-btn{margin-top:14px}}
-@media(max-width:560px){.team-hero{padding:70px 0 60px}.team-hero h1{font-size:62px}.team-section{padding-top:58px}.leader{grid-template-columns:1fr}.leader-photo{height:390px;min-height:390px}.leader-content{padding:28px 24px}.people-grid{grid-template-columns:1fr 1fr;gap:12px}.person-photo{height:245px}.person-body{padding:17px 14px}.person-name{font-size:21px}.person-bio{font-size:11px}.org-card{min-height:82px}.org-download{padding:18px}.team-closing{margin-top:58px;padding:55px 20px}}
+.team-closing h2{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(30px,4vw,52px);
+  line-height:1.12;letter-spacing:-.04em;
+  max-width:850px;margin:12px auto 0;
+}
+.team-empty,.team-error{
+  padding:50px 20px;
+  border:1px dashed #c8c7c1;
+  color:#777;text-align:center;
+}
+.team-error{
+  text-align:left;
+  background:#fff7f7;
+  border-color:#e5b5b5;
+  color:#8b1e1e;
+  white-space:pre-wrap;
+}
+
+/* RESPONSIVE */
+@media(max-width:1050px){
+  .leadership-grid{grid-template-columns:1fr}
+  .people-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:800px){
+  .team-section-head,.org-head{display:block}
+  .team-section-head p,.org-head p{margin-top:16px}
+  .people-grid{grid-template-columns:repeat(2,1fr)}
+  .org-tree{display:block;overflow:visible}
+  .org-root{min-width:0;margin-bottom:22px}
+  .org-download{display:block}
+  .org-download-btn{margin-top:14px}
+}
+@media(max-width:560px){
+  .team-hero{padding:70px 0 60px}
+  .team-hero h1{font-size:62px}
+  .team-section{padding-top:58px}
+  .leader{grid-template-columns:1fr}
+  .leader-photo{height:430px;min-height:430px}
+  .leader-content{padding:28px 24px}
+  .people-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .person-photo{height:300px}
+  .person-body{padding:17px 14px}
+  .person-name{font-size:21px}
+  .person-bio{font-size:11px}
+  .org-card{min-height:82px}
+  .org-download{padding:18px}
+  .team-closing{margin-top:58px;padding:55px 20px}
+}
 </style>
 </head>
+
 <body>
+
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="index.html#home"><span data-setting="company_name">HANDCRAFT MYANMAR COMPANY LIMITED</span><small data-setting="brand_subtitle">MYANMAR</small></a>
+    <a class="brand" href="index.html#home">
+      <span data-setting="company_name">HANDCRAFT MYANMAR COMPANY LIMITED</span>
+      <small data-setting="brand_subtitle">MYANMAR</small>
+    </a>
+
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu">☰</button>
+
     <nav class="main-nav" id="mainNav">
       <a href="index.html#home">Home</a>
       <a href="index.html#about">About Us</a>
@@ -95,155 +384,495 @@ body{background:#fff;color:var(--t-ink)}
 </header>
 
 <main class="team-page">
-<section class="team-hero">
-  <div class="container">
-    <div class="team-kicker">People &amp; Leadership</div>
-    <h1>Our Team</h1>
-    <p>The people behind Handcraft Myanmar — bringing together leadership, creative thinking, operational expertise and craftsmanship to create meaningful spaces.</p>
-  </div>
-</section>
 
-<section class="team-section">
-  <div class="container">
-    <div class="team-section-head">
-      <div><div class="section-kicker">01 / LEADERSHIP</div><h2>People who shape<br>the direction.</h2></div>
-      <p>Our leadership profiles are presented in a larger editorial format, while the wider team remains in a clean employee-card system below.</p>
+  <!-- HERO -->
+  <section class="team-hero">
+    <div class="container">
+      <div class="team-kicker">People &amp; Leadership</div>
+      <h1>Our Team</h1>
+      <p>
+        The people behind Handcraft Myanmar — bringing together leadership,
+        creative thinking, operational expertise and craftsmanship to create meaningful spaces.
+      </p>
     </div>
-    <div id="leadershipGrid" class="leadership-grid"><div class="team-empty">Loading leadership...</div></div>
-  </div>
-</section>
+  </section>
 
-<section class="org-section" id="organization">
-  <div class="container">
-    <div class="org-head">
-      <div><div class="section-kicker">02 / ORGANIZATION STRUCTURE</div><h2>How the team connects.</h2></div>
-      <p>The structure is generated from each employee's <strong>Reports To</strong> relationship in Admin. Add a new employee there and the organization structure will update automatically.</p>
-    </div>
-    <div id="orgTree" class="org-tree"><div class="team-empty">Loading organization structure...</div></div>
-    <div class="org-download">
-      <div><strong>Organization Chart PDF</strong><span>The final downloadable PDF will be enabled after the complete employee list has been entered.</span></div>
-      <button class="org-download-btn" type="button" disabled>PDF — Coming After Final Team Update</button>
-    </div>
-  </div>
-</section>
+  <!-- 01 MANAGEMENT -->
+  <section class="team-section">
+    <div class="container">
 
-<section class="team-section people-section">
-  <div class="container">
-    <div class="team-section-head">
-      <div><div class="section-kicker">03 / OUR PEOPLE</div><h2>The wider Handcraft team.</h2></div>
-      <p>Team members and management personnel use the original card style so the page can grow comfortably as more employees are added.</p>
-    </div>
-    <div id="peopleGrid" class="people-grid"><div class="team-empty">Loading team...</div></div>
-  </div>
-</section>
+      <div class="team-section-head">
+        <div>
+          <div class="section-kicker">01 / MANAGEMENT</div>
+          <h2>People who shape<br>the direction.</h2>
+        </div>
+        <p>
+          Our management leadership profiles use the larger editorial format.
+          Team members and positions reporting into the General Manager use the
+          original compact employee-card style below.
+        </p>
+      </div>
 
-<section class="team-closing">
-  <div class="section-kicker">HANDCRAFT MYANMAR</div>
-  <h2>Design with purpose. Build with precision. Create spaces that last.</h2>
-</section>
+      <div id="leadershipGrid" class="leadership-grid">
+        <div class="team-empty">Loading management...</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 02 OUR PEOPLE -->
+  <section class="team-section people-section">
+    <div class="container">
+
+      <div class="team-section-head">
+        <div>
+          <div class="section-kicker">02 / OUR PEOPLE</div>
+          <h2>The wider Handcraft team.</h2>
+        </div>
+        <p>
+          Employees and positions outside the executive leadership group are
+          presented in the original compact card style, making it easy to add
+          more people as the company grows.
+        </p>
+      </div>
+
+      <div id="peopleGrid" class="people-grid">
+        <div class="team-empty">Loading team...</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 03 ORGANIZATION STRUCTURE -->
+  <section class="org-section" id="organization">
+    <div class="container">
+
+      <div class="org-head">
+        <div>
+          <div class="section-kicker">03 / ORGANIZATION STRUCTURE</div>
+          <h2>How the team connects.</h2>
+        </div>
+        <p>
+          The organization structure is generated from each employee’s
+          <strong>Reports To</strong> relationship in Admin and is kept at the
+          bottom of the team page as the company-wide reference.
+        </p>
+      </div>
+
+      <div id="orgTree" class="org-tree">
+        <div class="team-empty">Loading organization structure...</div>
+      </div>
+
+      <div class="org-download">
+        <div>
+          <strong>Organization Chart PDF</strong>
+          <span>
+            The final downloadable PDF will be enabled after the complete
+            employee list has been entered.
+          </span>
+        </div>
+        <button class="org-download-btn" type="button" disabled>
+          PDF — Coming After Final Team Update
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="team-closing">
+    <div class="section-kicker">HANDCRAFT MYANMAR</div>
+    <h2>
+      Design with purpose. Build with precision. Create spaces that last.
+    </h2>
+  </section>
+
 </main>
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <div class="footer-company"><strong data-setting="company_name">HANDCRAFT MYANMAR COMPANY LIMITED</strong><p>Design • Build • Fit-Out</p></div>
-    <div class="footer-links">
-      <a href="index.html#home">Home</a><a href="index.html#about">About</a><a href="index.html#projects">Projects</a><a href="insights.html">Insights</a><a href="team.html">Our Team</a><a href="index.html#contact">Contact</a>
+
+    <div class="footer-company">
+      <strong data-setting="company_name">HANDCRAFT MYANMAR COMPANY LIMITED</strong>
+      <p>Design • Build • Fit-Out</p>
     </div>
-    <div class="footer-copyright">© <span id="year"></span> Handcraft Myanmar</div>
+
+    <div class="footer-links">
+      <a href="index.html#home">Home</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="insights.html">Insights</a>
+      <a href="team.html">Our Team</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+
+    <div class="footer-copyright">
+      © <span id="year"></span> Handcraft Myanmar
+    </div>
+
   </div>
 </footer>
 
 <script>
-const SUPABASE_URL="https://jvaqtuiyswjybasfumjw.supabase.co";
-const SUPABASE_KEY="sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
-const esc=v=>String(v??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
-const leadershipRoles=["CHIEF EXECUTIVE OFFICER","CHIEF FINANCE OFFICER","CHIEF OPERATION OFFICER","CHIEF OPERATING OFFICER"];
-function isLeader(p){return leadershipRoles.includes(String(p||"").toUpperCase().trim())}
-function photoMarkup(url,name,cls=""){return url?`<img class="${cls}" src="${esc(url)}" alt="${esc(name)}" loading="lazy">`:`<div class="org-avatar ${cls}">${esc(String(name||"?").slice(0,1))}</div>`}
-function quoteFor(p){
-  const x=String(p||"").toUpperCase();
-  if(x.includes("FINANCE"))return "Strong foundations create room for responsible, sustainable growth.";
-  if(x.includes("OPERATION"))return "Great projects come together when people, process and execution move as one.";
-  if(x.includes("EXECUTIVE"))return "A clear vision gives every project a meaningful direction.";
+const SUPABASE_URL = "https://jvaqtuiyswjybasfumjw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
+
+const esc = v =>
+  String(v ?? "").replace(/[&<>\"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    "\"":"&quot;",
+    "'":"&#039;"
+  }[c]));
+
+const leadershipRoles = [
+  "CHIEF EXECUTIVE OFFICER",
+  "CHIEF FINANCE OFFICER",
+  "CHIEF OPERATION OFFICER",
+  "CHIEF OPERATING OFFICER"
+];
+
+function isLeader(position){
+  return leadershipRoles.includes(
+    String(position || "").toUpperCase().trim()
+  );
+}
+
+function photoMarkup(url, name, cls = ""){
+  if(url){
+    return `<img class="${cls}" src="${esc(url)}" alt="${esc(name)}" loading="lazy">`;
+  }
+
+  return `
+    <div class="org-avatar ${cls}">
+      ${esc(String(name || "?").slice(0,1))}
+    </div>
+  `;
+}
+
+function quoteFor(position){
+  const x = String(position || "").toUpperCase();
+
+  if(x.includes("FINANCE")){
+    return "Strong foundations create room for responsible, sustainable growth.";
+  }
+
+  if(x.includes("OPERATION")){
+    return "Great projects come together when people, process and execution move as one.";
+  }
+
+  if(x.includes("EXECUTIVE")){
+    return "A clear vision gives every project a meaningful direction.";
+  }
+
   return "Good work is built through care, collaboration and consistency.";
 }
+
 function leaderCard(person){
-  return `<article class="leader">
-    <div class="leader-photo">${photoMarkup(person.photo_url,person.full_name)}</div>
-    <div class="leader-content">
-      <div>
-        <div class="leader-role">${esc(person.employee_id)} · ${esc(person.department||"MANAGEMENT")}</div>
-        <h3 class="leader-name">${esc(person.full_name)}</h3>
-        <div class="leader-position">${esc(person.position)}</div>
-        <div class="leader-rule"></div>
-        ${person.bio?`<p class="leader-bio">${esc(person.bio)}</p>`:`<p class="leader-bio">Leadership, strategic coordination and professional responsibility supporting Handcraft Myanmar's continued growth.</p>`}
+  return `
+    <article class="leader">
+
+      <div class="leader-photo">
+        ${photoMarkup(person.photo_url, person.full_name)}
       </div>
-      <div class="leader-quote">${esc(quoteFor(person.position))}</div>
-    </div>
-  </article>`
+
+      <div class="leader-content">
+
+        <div>
+          <div class="leader-role">
+            ${esc(person.employee_id)} · ${esc(person.department || "MANAGEMENT")}
+          </div>
+
+          <h3 class="leader-name">
+            ${esc(person.full_name)}
+          </h3>
+
+          <div class="leader-position">
+            ${esc(person.position)}
+          </div>
+
+          <div class="leader-rule"></div>
+
+          ${
+            person.bio
+              ? `<p class="leader-bio">${esc(person.bio)}</p>`
+              : `<p class="leader-bio">
+                  Leadership, strategic coordination and professional
+                  responsibility supporting Handcraft Myanmar's continued growth.
+                </p>`
+          }
+        </div>
+
+        <div class="leader-quote">
+          ${esc(quoteFor(person.position))}
+        </div>
+
+      </div>
+    </article>
+  `;
 }
+
 function personCard(person){
-  return `<article class="person-card">
-    <div class="person-photo">${person.photo_url?`<img src="${esc(person.photo_url)}" alt="${esc(person.full_name)} — ${esc(person.position)}" loading="lazy">`:`<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#999;font-size:10px;letter-spacing:.15em;text-transform:uppercase">Photo coming soon</div>`}</div>
-    <div class="person-body">
-      <div class="person-id">${esc(person.employee_id)}</div>
-      <h3 class="person-name">${esc(person.full_name)}</h3>
-      <div class="person-position">${esc(person.position)}</div>
-      <div class="person-dept">${esc(person.department||"Handcraft Myanmar")}</div>
-      ${person.bio?`<p class="person-bio">${esc(person.bio)}</p>`:""}
-      <div class="person-contact">Contact details available upon request.</div>
-    </div>
-  </article>`
+  return `
+    <article class="person-card">
+
+      <div class="person-photo">
+        ${
+          person.photo_url
+            ? `<img
+                src="${esc(person.photo_url)}"
+                alt="${esc(person.full_name)} — ${esc(person.position)}"
+                loading="lazy"
+              >`
+            : `
+              <div style="
+                height:100%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                color:#999;
+                font-size:10px;
+                letter-spacing:.15em;
+                text-transform:uppercase;
+              ">
+                Photo coming soon
+              </div>
+            `
+        }
+      </div>
+
+      <div class="person-body">
+
+        <div class="person-id">
+          ${esc(person.employee_id)}
+        </div>
+
+        <h3 class="person-name">
+          ${esc(person.full_name)}
+        </h3>
+
+        <div class="person-position">
+          ${esc(person.position)}
+        </div>
+
+        <div class="person-dept">
+          ${esc(person.department || "Handcraft Myanmar")}
+        </div>
+
+        ${
+          person.bio
+            ? `<p class="person-bio">${esc(person.bio)}</p>`
+            : ""
+        }
+
+        <div class="person-contact">
+          Contact details available upon request.
+        </div>
+
+      </div>
+    </article>
+  `;
 }
+
 function orgCard(person){
-  return `<div class="org-card">
-    ${photoMarkup(person.photo_url,person.full_name)}
-    <div><div class="org-name">${esc(person.full_name)}</div><div class="org-position">${esc(person.position)}</div></div>
-  </div>`
+  return `
+    <div class="org-card">
+
+      ${photoMarkup(person.photo_url, person.full_name)}
+
+      <div>
+        <div class="org-name">
+          ${esc(person.full_name)}
+        </div>
+
+        <div class="org-position">
+          ${esc(person.position)}
+        </div>
+      </div>
+
+    </div>
+  `;
 }
-function orgNode(person,children){
-  return `<div class="org-node">
-    ${orgCard(person)}
-    ${children.length?`<div class="org-children">${children.map(c=>`<div class="org-child">${orgNode(c,c._children||[])}</div>`).join("")}</div>`:""}
-  </div>`
+
+function orgNode(person, children){
+  return `
+    <div class="org-node">
+
+      ${orgCard(person)}
+
+      ${
+        children.length
+          ? `
+            <div class="org-children">
+              ${
+                children.map(child => `
+                  <div class="org-child">
+                    ${orgNode(child, child._children || [])}
+                  </div>
+                `).join("")
+              }
+            </div>
+          `
+          : ""
+      }
+
+    </div>
+  `;
 }
+
 async function loadTeam(){
-  const params=new URLSearchParams({select:"id,employee_id,full_name,position,department,bio,photo_url,manager_id,display_order",active:"eq.true",show_public:"eq.true",order:"display_order.asc,full_name.asc"});
-  const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),10000);
+
+  const params = new URLSearchParams({
+    select:
+      "id,employee_id,full_name,position,department,bio,photo_url,manager_id,display_order",
+    active:"eq.true",
+    show_public:"eq.true",
+    order:"display_order.asc,full_name.asc"
+  });
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+
   try{
-    const r=await fetch(`${SUPABASE_URL}/rest/v1/team_members?${params}`,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Accept:"application/json"},signal:controller.signal});
-    if(!r.ok)throw new Error(`Supabase returned HTTP ${r.status}`);
-    const people=await r.json(); clearTimeout(timer);
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/team_members?${params}`,
+      {
+        headers:{
+          apikey:SUPABASE_KEY,
+          Authorization:`Bearer ${SUPABASE_KEY}`,
+          Accept:"application/json"
+        },
+        signal:controller.signal
+      }
+    );
+
+    if(!response.ok){
+      throw new Error(`Supabase returned HTTP ${response.status}`);
+    }
+
+    const people = await response.json();
+    clearTimeout(timer);
+
     if(!people.length){
-      document.getElementById("leadershipGrid").innerHTML='<div class="team-empty">No public team members have been added yet.</div>';
-      document.getElementById("peopleGrid").innerHTML="";
-      document.getElementById("orgTree").innerHTML='<div class="team-empty">Organization structure will appear after employees are added.</div>';
+
+      document.getElementById("leadershipGrid").innerHTML =
+        '<div class="team-empty">No public management members have been added yet.</div>';
+
+      document.getElementById("peopleGrid").innerHTML = "";
+
+      document.getElementById("orgTree").innerHTML =
+        '<div class="team-empty">Organization structure will appear after employees are added.</div>';
+
       return;
     }
-    const leaders=people.filter(p=>isLeader(p.position));
-    const others=people.filter(p=>!isLeader(p.position));
-    document.getElementById("leadershipGrid").innerHTML=leaders.length?leaders.map(leaderCard).join(""):'<div class="team-empty">Leadership profiles will appear here.</div>';
-    document.getElementById("peopleGrid").innerHTML=others.length?others.map(personCard).join(""):'<div class="team-empty">Additional team members will appear here.</div>';
 
-    const byId=new Map(people.map(p=>[p.id,{...p,_children:[]}]));
-    const roots=[];
-    byId.forEach(p=>{
-      if(p.manager_id && byId.has(p.manager_id)) byId.get(p.manager_id)._children.push(p);
-      else roots.push(p);
+    /* Management = large profile style */
+    const leaders = people.filter(p => isLeader(p.position));
+
+    /* Everyone else = original smaller card style */
+    const others = people.filter(p => !isLeader(p.position));
+
+    document.getElementById("leadershipGrid").innerHTML =
+      leaders.length
+        ? leaders.map(leaderCard).join("")
+        : '<div class="team-empty">Management profiles will appear here.</div>';
+
+    document.getElementById("peopleGrid").innerHTML =
+      others.length
+        ? others.map(personCard).join("")
+        : '<div class="team-empty">Additional team members will appear here.</div>';
+
+    /* Organization structure */
+    const byId = new Map(
+      people.map(person => [
+        person.id,
+        {...person, _children:[]}
+      ])
+    );
+
+    const roots = [];
+
+    byId.forEach(person => {
+
+      if(person.manager_id && byId.has(person.manager_id)){
+        byId.get(person.manager_id)._children.push(person);
+      }else{
+        roots.push(person);
+      }
+
     });
-    byId.forEach(p=>p._children.sort((a,b)=>(a.display_order-b.display_order)||a.full_name.localeCompare(b.full_name)));
-    roots.sort((a,b)=>(a.display_order-b.display_order)||a.full_name.localeCompare(b.full_name));
-    document.getElementById("orgTree").innerHTML=roots.map(r=>`<div class="org-root">${orgNode(r,r._children)}</div>`).join("");
-  }catch(e){
-    clearTimeout(timer); console.error(e);
-    const msg=e.name==="AbortError"?"The team database request timed out after 10 seconds.":(e.message||"Unknown error");
-    ["leadershipGrid","peopleGrid","orgTree"].forEach(id=>document.getElementById(id).innerHTML=`<div class="team-error"><strong>Unable to load team.</strong>\n\n${esc(msg)}</div>`);
+
+    byId.forEach(person => {
+      person._children.sort(
+        (a,b) =>
+          (a.display_order - b.display_order) ||
+          a.full_name.localeCompare(b.full_name)
+      );
+    });
+
+    roots.sort(
+      (a,b) =>
+        (a.display_order - b.display_order) ||
+        a.full_name.localeCompare(b.full_name)
+    );
+
+    document.getElementById("orgTree").innerHTML =
+      roots.map(root => `
+        <div class="org-root">
+          ${orgNode(root, root._children)}
+        </div>
+      `).join("");
+
+  }catch(error){
+
+    clearTimeout(timer);
+    console.error(error);
+
+    const message =
+      error.name === "AbortError"
+        ? "The team database request timed out after 10 seconds."
+        : (error.message || "Unknown error");
+
+    ["leadershipGrid","peopleGrid","orgTree"].forEach(id => {
+      document.getElementById(id).innerHTML = `
+        <div class="team-error">
+          <strong>Unable to load team.</strong>
+
+          ${esc(message)}
+        </div>
+      `;
+    });
+
   }
 }
-const menuToggle=document.getElementById("menuToggle"),mainNav=document.getElementById("mainNav");
-if(menuToggle&&mainNav){menuToggle.addEventListener("click",()=>mainNav.classList.toggle("open"));mainNav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>mainNav.classList.remove("open")))}
-document.getElementById("year").textContent=new Date().getFullYear();
+
+/* Mobile navigation */
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
+
+if(menuToggle && mainNav){
+
+  menuToggle.addEventListener("click", () => {
+    mainNav.classList.toggle("open");
+  });
+
+  mainNav.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      mainNav.classList.remove("open");
+    });
+  });
+
+}
+
+/* Footer year */
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+/* Load team */
 loadTeam();
 </script>
+
 </body>
 </html>
