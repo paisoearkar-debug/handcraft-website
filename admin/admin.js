@@ -953,33 +953,41 @@ async function saveProject(event) {
 
     if (files.length) {
 
-      const uploadResult =
-        await uploadProjectImages(
-          project.id,
-          files
-        );
+  const uploadResult =
+    await uploadProjectImages(
+      project.id,
+      files
+    );
 
-      if (
-        !uploadResult.success
-      ) {
+  if (
+    !uploadResult.success
+  ) {
 
-        await loadProjects();
+    await loadProjects();
 
-        editProject(
-          project.id
-        );
+    editProject(
+      project.id
+    );
 
-        message(
-          "projectMessage",
-          "Project saved, but photo upload failed: " +
-            uploadResult.error,
-          true
-        );
+    message(
+      "projectMessage",
+      "Project saved, but photo upload failed: " +
+        uploadResult.error,
+      true
+    );
 
-        return;
-      }
-    }
+    return;
+  }
 
+  /* IMPORTANT:
+     Clear the file picker after a successful upload.
+     Otherwise clicking Save again uploads the same
+     photographs again.
+  */
+  if ($("projectImages")) {
+    $("projectImages").value = "";
+  }
+}
     await loadProjects();
 
     editProject(
