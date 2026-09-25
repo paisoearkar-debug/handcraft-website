@@ -141,7 +141,7 @@ body{background:#fff;color:var(--ink)}
 
   <section class="insights-wrap">
     <div class="container">
-      <div id="insightsGrid" class="insights-grid">
+      <div id="insights-grid" class="insights-grid">
         <div class="empty">Loading insights...</div>
       </div>
     </div>
@@ -179,85 +179,8 @@ body{background:#fff;color:var(--ink)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/app.js?v=7"></script>
 
-<script>
-const SUPABASE_URL="https://jvaqtuiyswjybasfumjw.supabase.co";
-const SUPABASE_KEY="sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
+<script src="assets/insights.js?v=8"></script>
 
-const esc=v=>String(v??"").replace(/[&<>\"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-}[c]));
-
-function formatDate(value){
-  if(!value)return "";
-  const d=new Date(value);
-  if(Number.isNaN(d.getTime()))return "";
-  return d.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
-}
-
-async function loadInsights(){
-  const grid=document.getElementById("insightsGrid");
-
-  try{
-    const query=new URLSearchParams({
-      select:"id,slug,title,category,excerpt,cover_image_url,published_at,created_at,published",
-      order:"published_at.desc,created_at.desc"
-    });
-
-    const r=await fetch(`${SUPABASE_URL}/rest/v1/insights?${query}`,{
-      headers:{
-        apikey:SUPABASE_KEY,
-        Authorization:`Bearer ${SUPABASE_KEY}`,
-        Accept:"application/json"
-      }
-    });
-
-    if(!r.ok)throw new Error(`Supabase returned HTTP ${r.status}`);
-
-    const rows=await r.json();
-    const published=rows.filter(x=>x.published!==false);
-
-    if(!published.length){
-      grid.innerHTML='<div class="empty">No published insights yet.</div>';
-      return;
-    }
-
-    grid.innerHTML=published.map(item=>{
-      const date=formatDate(item.published_at||item.created_at);
-      const slug=item.slug ? `?slug=${encodeURIComponent(item.slug)}` : "";
-
-      return `
-        <article class="insight-card">
-          <div class="insight-cover">
-            ${item.cover_image_url ? `<img src="${esc(item.cover_image_url)}" alt="${esc(item.title)}" loading="lazy">` : ""}
-          </div>
-          <div class="insight-body">
-            <div class="insight-date">${esc(date)}</div>
-            ${item.category ? `<div class="insight-category">${esc(item.category)}</div>` : ""}
-            <h2 class="insight-title">${esc(item.title)}</h2>
-            <p class="insight-excerpt">${esc(item.excerpt||"")}</p>
-            <a class="insight-link" href="insight.html${slug}">Read Insight →</a>
-          </div>
-        </article>
-      `;
-    }).join("");
-
-  }catch(error){
-    console.error(error);
-    grid.innerHTML=`<div class="empty">Unable to load insights right now.<br>${esc(error.message||"Unknown error")}</div>`;
-  }
-}
-
-const menuToggle=document.getElementById("menuToggle");
-const mainNav=document.getElementById("mainNav");
-
-if(menuToggle&&mainNav){
-  menuToggle.addEventListener("click",()=>mainNav.classList.toggle("open"));
-  mainNav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>mainNav.classList.remove("open")));
-}
-
-document.getElementById("year").textContent=new Date().getFullYear();
-loadInsights();
-</script>
 
 </body>
 </html>
