@@ -67,6 +67,12 @@ body{background:#fff;color:var(--ink)}
   font-size:9px;font-weight:800;
   letter-spacing:.15em;text-transform:uppercase;
 }
+.insight-category{
+  color:var(--green);
+  font-size:9px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;
+  margin-top:6px;
+}
 .insight-title{
   font-family:Georgia,"Times New Roman",serif;
   font-size:25px;line-height:1.08;
@@ -148,6 +154,7 @@ body{background:#fff;color:var(--ink)}
       <strong data-setting="company_name">HANDCRAFT MYANMAR COMPANY LIMITED</strong>
       <p>Design • Build • Fit-Out</p>
     </div>
+
     <div class="footer-links">
       <a href="index.html#home">Home</a>
       <a href="index.html#about">About</a>
@@ -156,9 +163,21 @@ body{background:#fff;color:var(--ink)}
       <a href="team.html">Our Team</a>
       <a href="index.html#contact">Contact</a>
     </div>
+
+    <div class="footer-socials" aria-label="Social media">
+      <a data-setting="facebook_url" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 1.9-5 5v3H6v4h3v4h3.2l.8-4H13V9.4c0-.9.3-1.4 1-1.4z"/></svg></a>
+      <a data-setting="instagram_url" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram"><svg class="instagram-outline" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.4" cy="6.7" r="1.2" fill="currentColor" stroke="none"></circle></svg></a>
+      <a data-setting="tiktok_url" href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4v10.1a4.9 4.9 0 1 1-4-4.8v3.1a1.9 1.9 0 0 0 1 1.7V4h3c.3 2 1.7 3.5 3.7 3.8V11c-1.4-.1-2.7-.6-3.7-1.4V14a4.9 4.9 0 1 1-3.9-4.8V6.5A7.7 7.7 0 0 0 14 4z"/></svg></a>
+      <a data-setting="youtube_url" href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.9 2.9 0 0 0-2-2C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.6.5a2.9 2.9 0 0 0-2 2C2 8.9 2 12 2 12s0 3.1.4 4.8a2.9 2.9 0 0 0 2 2c1.7.5 7.6.5 7.6.5s5.9 0 7.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-4.8.4-4.8s0-3.1-.4-4.8zM10 15.2V8.8l5.2 3.2-5.2 3.2z"/></svg></a>
+      <a data-setting="pinterest_url" href="#" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" title="Pinterest"><svg class="pinterest-outline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-3.3 17.4c-.1-1.5 0-3 .4-4.4l1-4.1s-.3-.7-.3-1.7c0-1.6.9-2.8 2.1-2.8 1 0 1.5.7 1.5 1.6 0 1-.6 2.4-.9 3.8-.3 1.1.6 2 1.7 2 2.1 0 3.7-2.2 3.7-5.3 0-2.8-2-4.8-5-4.8-3.4 0-5.4 2.6-5.4 5.2 0 1 .4 2.1.9 2.7l-.3 1.2c-.1.4-.4.5-.8.3-1.5-.7-2.4-2.8-2.4-4.5 0-3.7 2.7-7.1 7.8-7.1 4.1 0 7.3 2.9 7.3 6.7 0 4-2.5 7.2-6 7.2-1.2 0-2.3-.6-2.7-1.3l-.7 2.8c-.3 1.2-1.2 2.7-1.7 3.6.6.2 1.3.3 2 .3a9 9 0 1 0 0-18z"/></svg></a>
+    </div>
+
     <div class="footer-copyright">© <span id="year"></span> Handcraft Myanmar</div>
   </div>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/app.js?v=7"></script>
 
 <script>
 const SUPABASE_URL="https://jvaqtuiyswjybasfumjw.supabase.co";
@@ -184,22 +203,18 @@ async function loadInsights(){
       order:"published_at.desc,created_at.desc"
     });
 
-    const r=await fetch(
-      `${SUPABASE_URL}/rest/v1/insights?${query}`,
-      {
-        headers:{
-          apikey:SUPABASE_KEY,
-          Authorization:`Bearer ${SUPABASE_KEY}`,
-          Accept:"application/json"
-        }
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/insights?${query}`,{
+      headers:{
+        apikey:SUPABASE_KEY,
+        Authorization:`Bearer ${SUPABASE_KEY}`,
+        Accept:"application/json"
       }
-    );
+    });
 
     if(!r.ok)throw new Error(`Supabase returned HTTP ${r.status}`);
 
     const rows=await r.json();
-
-    const published=rows.filter(x => x.published !== false);
+    const published=rows.filter(x=>x.published!==false);
 
     if(!published.length){
       grid.innerHTML='<div class="empty">No published insights yet.</div>';
@@ -207,25 +222,20 @@ async function loadInsights(){
     }
 
     grid.innerHTML=published.map(item=>{
-      const date=formatDate(item.published_at || item.created_at);
+      const date=formatDate(item.published_at||item.created_at);
       const slug=item.slug ? `?slug=${encodeURIComponent(item.slug)}` : "";
 
       return `
         <article class="insight-card">
           <div class="insight-cover">
-            ${
-              item.cover_image_url
-                ? `<img src="${esc(item.cover_image_url)}" alt="${esc(item.title)}" loading="lazy">`
-                : ""
-            }
+            ${item.cover_image_url ? `<img src="${esc(item.cover_image_url)}" alt="${esc(item.title)}" loading="lazy">` : ""}
           </div>
           <div class="insight-body">
             <div class="insight-date">${esc(date)}</div>
+            ${item.category ? `<div class="insight-category">${esc(item.category)}</div>` : ""}
             <h2 class="insight-title">${esc(item.title)}</h2>
-            <p class="insight-excerpt">${esc(item.excerpt || "")}</p>
-            <a class="insight-link" href="index.html#insights${slug}">
-              Read Insight →
-            </a>
+            <p class="insight-excerpt">${esc(item.excerpt||"")}</p>
+            <a class="insight-link" href="insight.html${slug}">Read Insight →</a>
           </div>
         </article>
       `;
@@ -233,12 +243,7 @@ async function loadInsights(){
 
   }catch(error){
     console.error(error);
-    grid.innerHTML=`
-      <div class="empty">
-        Unable to load insights right now.<br>
-        ${esc(error.message || "Unknown error")}
-      </div>
-    `;
+    grid.innerHTML=`<div class="empty">Unable to load insights right now.<br>${esc(error.message||"Unknown error")}</div>`;
   }
 }
 
@@ -247,9 +252,7 @@ const mainNav=document.getElementById("mainNav");
 
 if(menuToggle&&mainNav){
   menuToggle.addEventListener("click",()=>mainNav.classList.toggle("open"));
-  mainNav.querySelectorAll("a").forEach(a =>
-    a.addEventListener("click",()=>mainNav.classList.remove("open"))
-  );
+  mainNav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>mainNav.classList.remove("open")));
 }
 
 document.getElementById("year").textContent=new Date().getFullYear();
