@@ -5,6 +5,8 @@
   const BUCKET = "team-photos";
   let members = [];
   let editing = "";
+  let draggedId = "";
+  let savingOrder = false;
 
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({
@@ -95,10 +97,95 @@
       const st = document.createElement("style");
       st.id = "teamAdminStyle";
       st.textContent = `
-        .team-admin-photo{width:58px;height:58px;border-radius:12px;object-fit:cover;background:#eee;display:block}
-        .team-admin-person{display:flex;align-items:center;gap:13px}
-        .team-admin-badge{display:inline-block;margin-left:6px;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:800;background:#eee}
-        .team-admin-badge.off{background:#fff0ef;color:#b42318}
+        .team-admin-photo{
+          width:58px;
+          height:58px;
+          border-radius:12px;
+          object-fit:cover;
+          background:#eee;
+          display:block;
+          flex:none
+        }
+        .team-admin-person{
+          display:flex;
+          align-items:center;
+          gap:13px;
+          min-width:0
+        }
+        .team-admin-badge{
+          display:inline-block;
+          margin-left:6px;
+          padding:3px 7px;
+          border-radius:999px;
+          font-size:10px;
+          font-weight:800;
+          background:#eee
+        }
+        .team-admin-badge.off{
+          background:#fff0ef;
+          color:#b42318
+        }
+
+        /* Safe built-in drag ordering — no separate drag.js required */
+        .team-sort-list{
+          display:flex;
+          flex-direction:column;
+          gap:8px
+        }
+        .team-sort-item{
+          position:relative;
+          transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+        }
+        .team-sort-item.dragging{
+          opacity:.45;
+        }
+        .team-sort-item.drag-over{
+          box-shadow:0 -3px 0 #111;
+        }
+        .team-drag-handle{
+          width:34px;
+          height:34px;
+          flex:0 0 34px;
+          border:1px solid #ddd;
+          border-radius:9px;
+          background:#f7f7f5;
+          color:#555;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          cursor:grab;
+          user-select:none;
+          -webkit-user-select:none;
+          font-size:18px;
+          line-height:1;
+        }
+        .team-drag-handle:active{
+          cursor:grabbing;
+        }
+        .team-sort-item.is-saving .team-drag-handle{
+          opacity:.55;
+        }
+        .team-sort-help{
+          margin:0 0 10px;
+          color:#777;
+          font-size:12px;
+        }
+        .team-order-number{
+          min-width:28px;
+          font-size:11px;
+          font-weight:800;
+          color:#888;
+          text-align:center;
+        }
+        .team-list-main{
+          display:flex;
+          align-items:center;
+          gap:10px;
+          min-width:0;
+        }
+        .team-list-main .team-admin-person{
+          flex:1;
+        }
       `;
       document.head.appendChild(st);
     }
@@ -152,41 +239,216 @@
       return;
     }
 
-    l.innerHTML = members.map(p => {
-      const manager = members.find(x => x.id === p.manager_id);
+    l.innerHTML = `
+      <p class="team-sort-help">↕ Drag the handle on the left to move employees up or down. The new order is saved automatically.</p>
+      <div class="team-sort-list">
+        ${members.map((p, index) => {
+          const manager = members.find(x => x.id === p.manager_id);
 
-      return `
-        <div class="list-item">
-          <div class="team-admin-person">
-            ${
-              p.photo_url
-                ? `<img class="team-admin-photo" src="${esc(p.photo_url)}" alt="${esc(p.full_name)}">`
-                : '<div class="team-admin-photo"></div>'
-            }
+          return `
+            <div class="list-item team-sort-item"
+                 data-team-id="${esc(p.id)}"
+                 draggable="false">
+              <div class="team-list-main">
+                <div class="team-drag-handle"
+                     draggable="true"
+                     title="Drag to reorder"
+                     aria-label="Drag ${esc(p.full_name)} to reorder">↕</div>
 
-            <div>
-              <strong>
-                ${esc(p.employee_id)} — ${esc(p.full_name)}
-                <span class="team-admin-badge ${p.active && p.show_public ? "" : "off"}">
-                  ${p.active && p.show_public ? "Public" : p.active ? "Hidden" : "Inactive"}
-                </span>
-              </strong>
+                <div class="team-order-number">${index + 1}</div>
 
-              <small>
-                ${esc(p.position)}
-                ${p.department ? " · " + esc(p.department) : ""}
-                ${manager ? " · Reports to " + esc(manager.full_name) : ""}
-              </small>
+                <div class="team-admin-person">
+                  ${
+                    p.photo_url
+                      ? `<img class="team-admin-photo" src="${esc(p.photo_url)}" alt="${esc(p.full_name)}">`
+                      : '<div class="team-admin-photo"></div>'
+                  }
+
+                  <div>
+                    <strong>
+                      ${esc(p.employee_id)} — ${esc(p.full_name)}
+                      <span class="team-admin-badge ${p.active && p.show_public ? "" : "off"}">
+                        ${p.active && p.show_public ? "Public" : p.active ? "Hidden" : "Inactive"}
+                      </span>
+                    </strong>
+
+                    <small>
+                      ${esc(p.position)}
+                      ${p.department ? " · " + esc(p.department) : ""}
+                      ${manager ? " · Reports to " + esc(manager.full_name) : ""}
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="list-actions">
+                <button type="button" onclick="editTeamMember('${p.id}')">Edit</button>
+                <button type="button" class="danger" onclick="deleteTeamMember('${p.id}')">Delete</button>
+              </div>
             </div>
-          </div>
+          `;
+        }).join("")}
+      </div>
+    `;
 
-          <div class="list-actions">
-            <button type="button" onclick="editTeamMember('${p.id}')">Edit</button>
-            <button type="button" class="danger" onclick="deleteTeamMember('${p.id}')">Delete</button>
-          </div>
-        </div>
-      `;
-    }).join("");
+    bindDrag();
+  }
+
+  function bindDrag() {
+    const listEl = $("teamList");
+    if (!listEl) return;
+
+    const items = Array.from(listEl.querySelectorAll(".team-sort-item"));
+    const handles = Array.from(listEl.querySelectorAll(".team-drag-handle"));
+
+    handles.forEach(handle => {
+      handle.addEventListener("dragstart", onDragStart);
+      handle.addEventListener("dragend", onDragEnd);
+
+      handle.addEventListener("keydown", event => {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          event.preventDefault();
+          const item = handle.closest(".team-sort-item");
+          if (!item) return;
+
+          const currentIndex = members.findIndex(x => x.id === item.dataset.teamId);
+          if (currentIndex < 0) return;
+
+          const nextIndex =
+            event.key === "ArrowUp"
+              ? currentIndex - 1
+              : currentIndex + 1;
+
+          if (nextIndex < 0 || nextIndex >= members.length) return;
+
+          moveMember(currentIndex, nextIndex);
+        }
+      });
+
+      handle.tabIndex = 0;
+      handle.setAttribute("role", "button");
+    });
+
+    items.forEach(item => {
+      item.addEventListener("dragover", onDragOver);
+      item.addEventListener("drop", onDrop);
+      item.addEventListener("dragenter", () => item.classList.add("drag-over"));
+      item.addEventListener("dragleave", event => {
+        if (!item.contains(event.relatedTarget)) {
+          item.classList.remove("drag-over");
+        }
+      });
+    });
+  }
+
+  function onDragStart(event) {
+    const handle = event.currentTarget;
+    const item = handle.closest(".team-sort-item");
+    if (!item) return;
+
+    draggedId = item.dataset.teamId;
+    item.classList.add("dragging");
+
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", draggedId);
+    }
+  }
+
+  function onDragEnd() {
+    const listEl = $("teamList");
+    if (listEl) {
+      listEl.querySelectorAll(".team-sort-item").forEach(item => {
+        item.classList.remove("dragging", "drag-over");
+      });
+    }
+    draggedId = "";
+  }
+
+  function onDragOver(event) {
+    if (!draggedId) return;
+    event.preventDefault();
+
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+  }
+
+  async function onDrop(event) {
+    event.preventDefault();
+
+    const target = event.currentTarget;
+    const targetId = target.dataset.teamId;
+
+    target.classList.remove("drag-over");
+
+    if (!draggedId || !targetId || draggedId === targetId) {
+      return;
+    }
+
+    const fromIndex = members.findIndex(x => x.id === draggedId);
+    const toIndex = members.findIndex(x => x.id === targetId);
+
+    if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) {
+      return;
+    }
+
+    moveMember(fromIndex, toIndex);
+  }
+
+  async function moveMember(fromIndex, toIndex) {
+    if (savingOrder) return;
+
+    const moved = members.splice(fromIndex, 1)[0];
+    members.splice(toIndex, 0, moved);
+
+    list();
+
+    savingOrder = true;
+    const listEl = $("teamList");
+    if (listEl) listEl.classList.add("is-saving");
+
+    try {
+      const updates = members.map((person, index) => ({
+        id: person.id,
+        display_order: index + 1
+      }));
+
+      /*
+       * Important:
+       * We update only display_order.
+       * Employee names, photos, managers, departments, etc. are untouched.
+       */
+      for (const row of updates) {
+        const result = await sb
+          .from("team_members")
+          .update({ display_order: row.display_order })
+          .eq("id", row.id);
+
+        if (result.error) {
+          throw result.error;
+        }
+      }
+
+      members.forEach((person, index) => {
+        person.display_order = index + 1;
+      });
+
+      msg("✓ Team order saved.");
+    } catch (error) {
+      console.error("Team reorder error:", error);
+
+      msg(
+        error?.message || "Could not save the new team order.",
+        true
+      );
+
+      await load();
+    } finally {
+      savingOrder = false;
+      const currentList = $("teamList");
+      if (currentList) currentList.classList.remove("is-saving");
+    }
   }
 
   async function uploadPhoto(file, employeeId) {
