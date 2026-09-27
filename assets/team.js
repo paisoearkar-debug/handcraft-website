@@ -3,6 +3,7 @@
 
   const SUPABASE_URL = "https://jvaqtuiyswjybasfumjw.supabase.co";
   const SUPABASE_KEY = "sb_publishable_GteenSO57Kw0uv1qm6YUiw_-uZ7Uwe0";
+  const DEFAULT_EMPLOYEE_IMAGE = "assets/default-employee.png";
 
   const leadershipRoles = new Set([
     "CHIEF EXECUTIVE OFFICER",
@@ -60,11 +61,8 @@
   }
 
   function photoMarkup(url, name, cls = "") {
-    if (url) {
-      return `<img class="${esc(cls)}" src="${esc(url)}" alt="${esc(name)}" loading="lazy">`;
-    }
-
-    return `<div class="org-avatar ${esc(cls)}">${esc(String(name || "?").slice(0, 1))}</div>`;
+    const src = url || DEFAULT_EMPLOYEE_IMAGE;
+    return `<img class="${esc(cls)}" src="${esc(src)}" alt="${esc(name)}" loading="lazy">`;
   }
 
   function quoteFor(position) {
@@ -127,13 +125,9 @@
     return `
       <article class="person-card">
         <div class="person-photo">
-          ${
-            person.photo_url
-              ? `<img src="${esc(person.photo_url)}"
-                      alt="${esc(person.full_name)} — ${esc(person.position)}"
-                      loading="lazy">`
-              : `<div class="team-photo-placeholder">Photo coming soon</div>`
-          }
+          <img src="${esc(person.photo_url || DEFAULT_EMPLOYEE_IMAGE)}"
+               alt="${esc(person.full_name)} — ${esc(person.position)}"
+               loading="lazy">
         </div>
 
         <div class="person-body">
@@ -158,13 +152,9 @@
     return `
       <article class="production-card">
         <div class="production-photo">
-          ${
-            person.photo_url
-              ? `<img src="${esc(person.photo_url)}"
-                      alt="${esc(person.full_name)} — ${esc(person.position)}"
-                      loading="lazy">`
-              : `<div class="production-placeholder">Photo</div>`
-          }
+          <img src="${esc(person.photo_url || DEFAULT_EMPLOYEE_IMAGE)}"
+               alt="${esc(person.full_name)} — ${esc(person.position)}"
+               loading="lazy">
         </div>
 
         <div class="production-body">
